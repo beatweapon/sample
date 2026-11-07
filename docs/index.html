@@ -42,7 +42,7 @@ const chapters=[
 const $=s=>document.querySelector(s),world=$('#world'),prev=$('#previous'),next=$('#following'),progress=$('#progress'),mode=$('#mode');
 const gl=world.getContext('webgl',{antialias:true,alpha:false,premultipliedAlpha:false});
 if(!gl){mode.textContent='WebGLが利用できません';world.replaceWith(Object.assign(document.createElement('div'),{textContent:'このブラウザではWebGLを利用できません。Chromeで開いてください。'}));return}
-const vert='attribute vec3 position;attribute vec2 uv;attribute float light;uniform vec2 resolution;varying vec2 vUv;varying float vLight;void main(){float aspect=resolution.x/resolution.y;vec2 screen=vec2(position.x*1.12/aspect,(position.y*.84-position.z*.55)*1.57-.25);gl_Position=vec4(screen,0.35-position.y*.28-position.z*.002,1.0);vUv=uv;vLight=light;}';
+const vert='attribute vec3 position;attribute vec2 uv;attribute float light;uniform vec2 resolution;varying vec2 vUv;varying float vLight;void main(){float aspect=resolution.x/resolution.y;vec2 screen=vec2(position.x*1.12/aspect,(position.y*.84-position.z*.55)*1.26-.04);gl_Position=vec4(screen,0.35-position.y*.28-position.z*.002,1.0);vUv=uv;vLight=light;}';
 const frag='precision mediump float;uniform sampler2D texture0;uniform vec4 tint;uniform float textured;varying vec2 vUv;varying float vLight;void main(){vec4 c=mix(tint,texture2D(texture0,vUv)*tint,textured);gl_FragColor=vec4(c.rgb*(.59+.41*vLight),c.a);}';
 const shader=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s};
 const prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,vert));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,frag));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(prog));gl.useProgram(prog);
@@ -110,7 +110,7 @@ const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
  for(let i=0;i<count;i++){
   const u0=i/count,u1=(i+1)/count;
   const a=point(u0,front),b=point(u1,front),c=point(u1,rear),d=point(u0,rear);
-  const illumination=.85+.15*Math.abs(Math.cos(angle))+.08*Math.sin(u0*5+angle);
+  const illumination=1+.08*Math.sin(u0*5)-.11*Math.max(0,Math.sin(angle));
   const texU=u=>(back||sideSign<0)?1-u:u;
   // Canvas textures use flipped unpack coordinates: V=1 is the page top.
   for(const [p,U,V] of [[a,u0,1],[b,u1,1],[c,u1,0],[a,u0,1],[c,u1,0],[d,u0,0]]){
@@ -146,7 +146,7 @@ const render=()=>{
   sheet(null,1,.14,tex[(base+1)*2+1]);
   const showingBack=turn>=Math.PI/2;
   const leafTexture=showingBack?tex[(base+1)*2]:tex[base*2+1];
-  sheet(null,1,.157,leafTexture,turn,showingBack);
+  sheet(null,1,.141,leafTexture,turn,showingBack);
  }else{
   sheet(null,-1,.14,tex[current*2]);
   sheet(null,1,.14,tex[current*2+1]);
@@ -171,7 +171,7 @@ const transition=target=>{
   turn=direction>0?Math.PI*smooth:Math.PI*(1-smooth);
   render();
   if(u<1){raf=requestAnimationFrame(tick);return}
-  // Only swap spreads after the final leaf pose has rendered.
+  // Final animated frame and stationary spread have matching page geometry and lighting.
   current=target;turn=0;turnDirection=0;animating=false;
   show();render();
  };
