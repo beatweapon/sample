@@ -119,8 +119,8 @@ const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
  }
  draw(data,rgba('#fff6e4'),texture);
 };
-let current=0,turn=0,turnDirection=0,animating=false,drag=null,raf=null;
-const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height)};
+let current=0,segment=0,turn=0,animating=false,drag=null,raf=null;
+const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height);if(typeof render==='function')render()};
 addEventListener('resize',resize);resize();
 const render=()=>{
  gl.clearColor(.045,.065,.079,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
@@ -138,19 +138,14 @@ const render=()=>{
  for(let i=0;i<8;i++){let y=-.015+i*.014;rectangle(-1.41,1.41,-.99,.99,y,rgba(i%2?'#d7c7a6':'#f0dfc1'))}
  rectangle(-.035,.035,-1.055,1.055,.104,rgba('#5c3b2a'));
  for(let i=0;i<5;i++){rectangle(-.021,.021,-1,1,.11+i*.003,rgba('#b48c55',.4))}
- // Animate a single two-sided leaf; switching the visible face at edge-on
- // avoids drawing two coplanar textures and the flash at the landing frame.
- if(turnDirection!==0){
-  const base=turnDirection>0?current:current-1;
-  sheet(null,-1,.14,tex[base*2]);
-  sheet(null,1,.14,tex[(base+1)*2+1]);
-  const showingBack=turn>=Math.PI/2;
-  const leafTexture=showingBack?tex[(base+1)*2]:tex[base*2+1];
-  sheet(null,1,.141,leafTexture,turn,showingBack);
- }else{
-  sheet(null,-1,.14,tex[current*2]);
-  sheet(null,1,.14,tex[current*2+1]);
- }
+ // Always render the exact same geometry, including at rest.
+ // No 'animation -> static pages' swap is performed on landing.
+ const base=segment;
+ sheet(null,-1,.14,tex[base*2]);
+ sheet(null,1,.14,tex[(base+1)*2+1]);
+ const showingBack=turn>=Math.PI/2;
+ const leafTexture=showingBack?tex[(base+1)*2]:tex[base*2+1];
+ sheet(null,1,.141,leafTexture,turn,showingBack);
  // vignette is CSS layer above
 };
 const spreadCount=chapters.length/2;
@@ -159,8 +154,9 @@ const transition=target=>{
  if(animating||target<0||target>=spreadCount||Math.abs(target-current)!==1)return;
  const direction=Math.sign(target-current);
  animating=true;
- turnDirection=direction;
- // Forward: right-to-left from 0 to PI. Backward: left-to-right from PI to 0.
+ // The segment names the physical leaf, and the turn angle is its sole pose.
+ // Both endpoints remain animated mesh poses after playback stops.
+ segment=Math.min(current,target);
  turn=direction>0?0:Math.PI;
  const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1350;
  const started=performance.now();
@@ -171,9 +167,9 @@ const transition=target=>{
   turn=direction>0?Math.PI*smooth:Math.PI*(1-smooth);
   render();
   if(u<1){raf=requestAnimationFrame(tick);return}
-  // Final animated frame and stationary spread have matching page geometry and lighting.
-  current=target;turn=0;turnDirection=0;animating=false;
-  show();render();
+  // Keep the exact last rendered angle and mesh; only logical page state changes.
+  current=target;animating=false;
+  show();
  };
  raf=requestAnimationFrame(tick);
 };
