@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HEXIM — つかめる年代記</title>
+<style>
+:root{color-scheme:light;--ink:#44301f;--edge:#ad8f61;--paper:#eadbbd}*{box-sizing:border-box}body{margin:0;color:#ded4c5;background:#141917;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif}
+header{min-height:58px;padding:11px max(14px,3vw);display:flex;align-items:center;justify-content:space-between;gap:14px;background:#172024;border-bottom:1px solid #a08c612d;flex-wrap:wrap}
+.brand{color:#e8c992;font-size:22px;letter-spacing:.24em}nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}nav a{padding:7px 8px;font:11px system-ui,sans-serif;color:#cfbd9d;text-decoration:none;border:1px solid #8f785444;border-radius:4px}nav a[aria-current]{color:#192021;background:#d3ad75}
+main{max-width:1140px;margin:0 auto;padding:23px 15px 35px}
+h1{font-size:clamp(21px,3vw,31px);font-weight:normal;letter-spacing:.12em;margin:8px 0;color:#eadcc4} .sub{font-size:12px;color:#9da59c;margin-bottom:20px}
+.desk{position:relative;min-height:660px;padding:36px 14px 38px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at center,#3e3b30,#1a2424 70%,#111819);border:1px solid #83724f55;border-radius:10px}
+.desk:before{content:"";position:absolute;inset:0;opacity:.25;background:repeating-linear-gradient(7deg,#fff0 0 12px,#7d624a16 13px,#fff0 18px);pointer-events:none}
+.book-under{width:min(88vw,760px);height:570px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-.5deg);background:linear-gradient(90deg,#54341f,#b39562 1.2%,#4a301e 2%,#826041 98%,#46301f);border-radius:5px 12px 12px 5px;box-shadow:0 24px 45px #0009,0 0 0 5px #3b261b,0 0 0 8px #ac8654,inset 8px 0 12px #281a11}
+.book-under .next{position:absolute;inset:10px 11px 10px 10px;background:#e0d1af;border:1px solid #b6a079;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;color:#58412a}
+.book-under h2{font-size:26px;letter-spacing:.13em;font-weight:normal}.book-under p{line-height:2;font-size:14px}
+.sheet-area{position:relative;width:min(88vw,760px);height:570px;z-index:2;filter:drop-shadow(4px 6px 6px #0005)}
+#page{width:100%;height:100%;color:var(--ink);background:var(--paper);border:1px solid #ab926e;box-shadow:inset 0 0 18px #6f522b27;position:relative;overflow:hidden;user-select:text}
+#page:before{content:"";position:absolute;inset:10px;border:1px solid #b49c77;pointer-events:none}
+.ink{height:100%;padding:39px clamp(26px,7%,64px);display:flex;flex-direction:column}
+.chapter{font-size:11px;letter-spacing:.22em;text-align:center;color:#886e4f;border-bottom:1px solid #b9a37e;padding-bottom:13px}
+.ink h2{text-align:center;margin:23px 0 14px;font-size:clamp(21px,3.2vw,30px);font-weight:normal;letter-spacing:.16em}
+.ornament{font-size:46px;text-align:center;color:#846740;line-height:1;margin:5px 0 19px}
+.ink p{font-size:clamp(12px,1.5vw,15px);line-height:2.2;letter-spacing:.04em;margin:8px 0}
+.ink a{color:#765333;text-decoration-thickness:1px;text-underline-offset:4px}.ink a:hover{color:#9b481d}
+.folio{margin-top:auto;text-align:center;border-top:1px solid #b49b73;padding-top:10px;font-size:11px;letter-spacing:.17em;color:#92744d}
+.corner{position:absolute;right:0;bottom:0;width:96px;height:96px;z-index:5;cursor:grab;touch-action:none;user-select:none}
+.corner:before{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 51px 51px;border-color:transparent transparent #bd9d6c transparent;filter:drop-shadow(-2px -3px 3px #35200b3a)}
+.corner:after{content:"つかむ";position:absolute;right:4px;bottom:11px;font-size:10px;transform:rotate(-42deg);color:#44301f}
+#deform{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;z-index:4}
+.sheet-area.dragging{filter:none}.sheet-area.dragging #page{visibility:hidden}.sheet-area.dragging #deform{display:block}
+#capture{position:fixed;left:-9999px;top:0;width:760px;height:570px;pointer-events:none}
+#capture .capture-source{width:760px;height:570px;background:var(--paper);color:var(--ink)}
+#capture .capture-source #capture-inner{width:760px;height:570px}
+.actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px 0}.actions button{background:#343b35;border:1px solid #ae956a;color:#efd7ad;font:12px Georgia,"Yu Mincho",serif;padding:11px 15px;cursor:pointer}.actions button:hover:not(:disabled){background:#5c5343}.actions button:disabled{opacity:.35;cursor:default}.actions small{font:11px system-ui,sans-serif;color:#b9b3a4}
+.notice{max-width:850px;margin:20px auto 0;font:12px/1.9 system-ui,sans-serif;color:#a9b0ad}.notice strong{color:#e1cba8}
+@media(max-width:780px){.desk{min-height:490px}.book-under,.sheet-area{height:420px}.ink{padding:27px 27px}.ink p{font-size:12px;line-height:1.85}.ornament{font-size:29px;margin:2px 0 10px}.ink h2{margin:14px 0 10px}.chapter{font-size:9px}.corner{width:78px;height:78px}}
+@media(max-width:500px){.desk{min-height:460px;padding:14px 5px}.book-under,.sheet-area{height:400px}.ink{padding:20px}.ink p{font-size:11px}.ink h2{font-size:18px}.chapter{font-size:8px}.ornament{font-size:26px}.folio{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style></head><body>
+<header><div class="brand">HEXIM</div><nav aria-label="サンプル切り替え"><a href="./classic.html">初期版</a><a href="./index.html">WebGL安定版</a><a href="./volume.html">質感実験</a><a href="./metamorphosis.html">モーフィング</a><a href="./living-page.html" aria-current="page">つかめる年代記</a></nav></header>
+<main><div style="text-align:center"><div style="font-size:10px;letter-spacing:.25em;color:#bba57f">THE LOST CHRONICLES / EXPERIMENT 05</div><h1>第七世界の年代記</h1><div class="sub">普通の文書として読んでから、右下の紙をつまんでみてください。</div></div>
+<section class="desk" aria-label="年代記"><div class="book-under"><div class="next"><div style="font-size:45px;color:#98794a">❦</div><h2 id="under-title">次の記録</h2><p>その紙の下にも、歴史は続いている。</p></div></div>
+<div class="sheet-area" id="sheet"><article id="page"><div class="ink" id="ink"><div class="chapter" id="chapter">THE AGE OF ASH · CHAPTER I</div><h2 id="title">最初の灯火</h2><div class="ornament" aria-hidden="true">❦</div><p id="paragraph1">旅人たちが荒野の果てに最初の火を灯した。それは小さな光だったが、やがて街道が伸び、鐘が鳴り、新しい町が生まれた。</p><p id="paragraph2">剣を携えた者、鍛冶場を守った者、遠くの土地へ出かけた者。それぞれの選択がひとつの世界を形づくっていった。</p><p><a href="#archive" id="history-link">歴史書の記録について読む</a> — このリンクも普通のHTMLです。</p><div class="folio" id="folio">— 01 —</div></div></article>
+<canvas id="deform" aria-hidden="true"></canvas><div class="corner" id="corner" role="button" tabindex="0" aria-label="ページの端をつかんでめくる"></div></div></section>
+<div class="actions"><button id="prev" type="button">← 前の記録</button><span id="count" style="min-width:55px;text-align:center;color:#d6bd91;font:12px Georgia">1 / 3</span><button id="next" type="button">次の記録 →</button><button id="export" type="button">この年代記をHTMLで保存</button><small id="mode">描画方式を確認中</small></div>
+<p class="notice" id="archive"><strong>試したい体験：</strong>最初は普通に選択・コピー・リンク操作ができるHTML文書。それがドラッグした瞬間に紙として曲がり、下から別の記録が現れます。ドラッグを戻すと同じ文書に戻ります。単一HTML・オフライン対応です。</p>
+</main>
+<canvas id="capture" layoutsubtree content="drawable" width="760" height="570"><div class="capture-source" drawable id="capture-source"><div id="capture-inner"></div></div></canvas>
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s),sheet=$('#sheet'),page=$('#page'),corner=$('#corner'),deform=$('#deform'),capture=$('#capture'),src=$('#capture-source'),captureInner=$('#capture-inner'),indicator=$('#mode');
+const chapters=[
+{chapter:'THE AGE OF ASH · CHAPTER I',title:'最初の灯火',a:'旅人たちが荒野の果てに最初の火を灯した。それは小さな光だったが、やがて街道が伸び、鐘が鳴り、新しい町が生まれた。',b:'剣を携えた者、鍛冶場を守った者、遠くの土地へ出かけた者。それぞれの選択がひとつの世界を形づくっていった。'},
+{chapter:'THE AGE OF ASH · CHAPTER II',title:'築かれた王国',a:'霧の向こうに新しい街が見えた。壁を築き、地図を広げ、誰も知らなかった谷に名前を与えた。人々が集まり、やがて王国が生まれた。',b:'王国は剣だけで成立したのではない。明日も火を守ると決めた人々がいたから、街は数百の夜を越えた。'},
+{chapter:'THE AGE OF ASH · EPILOGUE',title:'世界の終わり',a:'夜空の赤い星が落ち、最後の鐘が鳴った。英雄たちの名は古びた紙に刻まれ、街の灯りはゆっくりと消えていった。',b:'それでも歴史は残る。この一枚をめくった者が、かつてこの世界が存在したことを思い出すために。'}];
+let index=0,drag=null,busy=false,progress=0,bitmap=null,raf=0;
+const context=deform.getContext('2d');
+const native=typeof capture.getContext('2d').drawElementImage==='function';
+indicator.textContent=native?'HTML-in-Canvas 対応':'CSSフォールバック（HTML-in-Canvas非対応）';
+const fill=()=>{
+ const c=chapters[index];$('#chapter').textContent=c.chapter;$('#title').textContent=c.title;$('#paragraph1').textContent=c.a;$('#paragraph2').textContent=c.b;$('#folio').textContent='— '+String(index+1).padStart(2,'0')+' —';$('#count').textContent=(index+1)+' / '+chapters.length;$('#prev').disabled=index===0;$('#next').disabled=index===chapters.length-1;$('#under-title').textContent=chapters[Math.min(index+1,chapters.length-1)].title;
+};
+const capturePage=()=>{
+ if(!native)return false;
+ try{
+  captureInner.replaceChildren(page.querySelector('.ink').cloneNode(true));
+  const ctx=capture.getContext('2d');ctx.clearRect(0,0,760,570);
+  ctx.drawElementImage(src,0,0);
+  const snapshot=document.createElement('canvas');snapshot.width=760;snapshot.height=570;snapshot.getContext('2d').drawImage(capture,0,0);
+  bitmap=snapshot;return true;
+ }catch(e){console.warn('HTML-in-Canvas capture unavailable',e);return false}
+};
+const resize=()=>{
+ const b=sheet.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);deform.width=Math.round(b.width*dpr);deform.height=Math.round(b.height*dpr);context.setTransform(dpr,0,0,dpr,0,0);
+};
+const render=t=>{
+ const w=sheet.clientWidth,h=sheet.clientHeight;context.clearRect(0,0,w,h);
+ if(!bitmap)return;
+ // Draw a deforming mesh as narrow strips. The dragged corner drives both bend and drop.
+ const N=70,step=w/N,fold=t*w*.94;
+ for(let i=0;i<N;i++){
+  const u=i/N,sourceX=u*760,sourceW=760/N+.8;
+  const influence=Math.pow(u,2.35),curl=Math.sin(Math.PI*t)*influence;
+  const x=u*w-fold*influence;
+  const nextU=(i+1)/N,nextInfluence=Math.pow(nextU,2.35),x2=nextU*w-fold*nextInfluence;
+  const sw=Math.max(0,x2-x);
+  if(sw<=0)continue;
+  const y=-curl*h*.12;
+  const dy=curl*h*.08;
+  context.save();context.beginPath();context.rect(x,-h*.2,sw+1,h*1.5);context.clip();
+  context.drawImage(bitmap,sourceX,0,sourceW,570,x,y,sw+1,h+dy);
+  context.fillStyle='rgba(55,33,12,'+(curl*.26)+')';context.fillRect(x,y,sw+1,h+dy);
+  context.restore();
+ }
+ const grad=context.createLinearGradient(Math.max(0,w-fold-95),0,w-fold+25,0);grad.addColorStop(0,'#0000');grad.addColorStop(.78,'#38201318');grad.addColorStop(1,'#25170c55');
+ context.fillStyle=grad;context.fillRect(Math.max(0,w-fold-95),0,120,h);
+};
+const setProgress=t=>{progress=Math.max(0,Math.min(1,t));render(progress);if(!native){page.style.transform='perspective(1200px) rotateY('+(-progress*145)+'deg)';page.style.transformOrigin='left center';page.style.visibility='visible';}};
+const begin=e=>{
+ if(busy)return;
+ if(index>=chapters.length-1)return;
+ const rect=sheet.getBoundingClientRect();
+ if(native&&!capturePage()){indicator.textContent='HTML描画失敗：CSSフォールバック';}
+ resize();drag={x:e.clientX,y:e.clientY,start:progress,active:true};corner.setPointerCapture(e.pointerId);
+ if(bitmap){sheet.classList.add('dragging');render(0)}else{sheet.classList.remove('dragging')}
+ corner.style.cursor='grabbing';
+};
+const move=e=>{
+ if(!drag)return;
+ const width=sheet.clientWidth,delta=Math.max(0,drag.x-e.clientX);
+ setProgress(Math.min(1,delta/(width*.62)));
+};
+const finish=()=>{
+ if(!drag)return;drag=null;corner.style.cursor='grab';
+ const to=progress>.43?1:0;const start=progress;busy=true;
+ const t0=performance.now(),duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:320;
+ const frame=now=>{
+  const p=duration===0?1:Math.min(1,(now-t0)/duration),ease=p*p*(3-2*p);
+  setProgress(start+(to-start)*ease);
+  if(p<1){raf=requestAnimationFrame(frame);return}
+  if(to===1)index++;
+  progress=0;bitmap=null;sheet.classList.remove('dragging');page.style.transform='';page.style.visibility='';fill();busy=false;
+ };
+ raf=requestAnimationFrame(frame);
+};
+corner.addEventListener('pointerdown',begin);corner.addEventListener('pointermove',move);corner.addEventListener('pointerup',finish);corner.addEventListener('pointercancel',finish);
+corner.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(index+1)}});
+const go=target=>{if(busy||target<0||target>=chapters.length)return;index=target;bitmap=null;progress=0;sheet.classList.remove('dragging');page.style.transform='';page.style.visibility='';fill()};
+$('#prev').addEventListener('click',()=>go(index-1));$('#next').addEventListener('click',()=>go(index+1));
+$('#history-link').addEventListener('click',e=>{e.preventDefault();$('#archive').scrollIntoView({behavior:'smooth'})});
+$('#export').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob(['<!doctype html>\n'+document.documentElement.outerHTML],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='hexim-living-page.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+addEventListener('resize',resize);fill();resize();
+})();
+</script></body></html>
