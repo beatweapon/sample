@@ -100,11 +100,10 @@ const rectangle=(x0,x1,z0,z1,y,color,texture=null,L=1)=>{
 const side=(x0,x1,z0,z1,y0,y1,color)=>{vertices.length=0;quad([x0,y0,z0],[x1,y0,z0],[x1,y1,z1],[x0,y1,z1],.8);draw(vertices,color)};
 // Curvature stays on the exact same mesh at the resting endpoints.
 const pagePoint=(u,z,sideSign,y,angle,back=false)=>{
- const moving=angle>0.00001&&angle<Math.PI-.00001;
- const local=moving?angle-.24*Math.sin(angle)*u*u:angle;
- const x=(moving||angle>0?Math.cos(local):sideSign)*1.39*u;
- const lift=moving?Math.max(0,Math.sin(local))*(.82*u+.14*Math.sin(Math.PI*u)):0;
- const crossBend=moving?.044*Math.sin(angle)*Math.sin(Math.PI*u)*Math.cos(z*1.4):0;
+ const local=angle-.24*Math.sin(angle)*u*u;
+ const x=(angle>0?Math.cos(local):sideSign)*1.39*u;
+ const lift=Math.max(0,Math.sin(local))*(.82*u+.14*Math.sin(Math.PI*u));
+ const crossBend=.044*Math.sin(angle)*Math.sin(Math.PI*u)*Math.cos(z*1.4);
  return [x,y+.018*Math.sin(Math.PI*u)+.018*u+lift+crossBend+(back?-.003:0),z];
 };
 const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
@@ -132,7 +131,10 @@ const paperEdge=(sideSign,y,angle)=>{
  }
  draw(data,rgba('#c7ae87'));
 };
-let current=0,segment=0,turn=0,animating=false,drag=null,raf=null;
+// Every physical leaf has an immutable front and back texture.
+const spreadCount=chapters.length/2,leafCount=spreadCount-1;
+const leafAngles=Array(leafCount).fill(0);
+let current=0,animating=false,drag=null,raf=null;
 const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height);};
 addEventListener('resize',resize);resize();
 const render=()=>{
@@ -151,40 +153,38 @@ const render=()=>{
  for(let i=0;i<8;i++){let y=-.015+i*.014;rectangle(-1.41,1.41,-.99,.99,y,rgba(i%2?'#d7c7a6':'#f0dfc1'))}
  rectangle(-.035,.035,-1.055,1.055,.104,rgba('#5c3b2a'));
  for(let i=0;i<5;i++){rectangle(-.021,.021,-1,1,.11+i*.003,rgba('#b48c55',.4))}
- // Always render the exact same geometry, including at rest.
- // No 'animation -> static pages' swap is performed on landing.
- const base=segment;
- sheet(null,-1,.14,tex[base*2]);
- sheet(null,1,.14,tex[(base+1)*2+1]);
- const showingBack=turn>=Math.PI/2;
- const leafTexture=showingBack?tex[(base+1)*2]:tex[base*2+1];
- sheet(null,1,.141,leafTexture,turn,showingBack);
- paperEdge(1,.141,turn);
+ // Fixed underlying cover pages; no content reassignment during a turn.
+ sheet(null,-1,.132,tex[0],0);
+ sheet(null,1,.132,tex[tex.length-1],0);
+ // A permanent leaf bridges each adjacent pair of spreads.
+ for(let i=leafCount-1;i>=0;i--){
+  const angle=leafAngles[i],progress=angle/Math.PI;
+  const y=.147+(leafCount-1-i)*.003*(1-progress)+i*.003*progress;
+  const back=angle>=Math.PI/2;
+  sheet(null,1,y,back?tex[2*i+2]:tex[2*i+1],angle,back);
+  paperEdge(1,y,angle);
+ }
  // vignette is CSS layer above
 };
 addEventListener('resize',render);
-const spreadCount=chapters.length/2;
-const show=()=>{progress.textContent=String(current+1).padStart(2,'0')+' / '+String(spreadCount).padStart(2,'0');prev.disabled=animating||current===0;next.disabled=animating||current===spreadCount-1};
+const show=()=>{
+ progress.textContent=String(current+1).padStart(2,'0')+' / '+String(spreadCount).padStart(2,'0');
+ prev.disabled=animating||current===0;next.disabled=animating||current===spreadCount-1;
+};
 const transition=target=>{
  if(animating||target<0||target>=spreadCount||Math.abs(target-current)!==1)return;
- const direction=Math.sign(target-current);
- animating=true;
- // The segment names the physical leaf, and the turn angle is its sole pose.
- // Both endpoints remain animated mesh poses after playback stops.
- segment=Math.min(current,target);
- turn=direction>0?0:Math.PI;
+ const direction=Math.sign(target-current),leafIndex=direction>0?current:target;
+ const start=leafAngles[leafIndex],end=direction>0?Math.PI:0;
  const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1350;
+ animating=true;show();
  const started=performance.now();
- show();render();
  const tick=now=>{
   const u=duration===0?1:Math.min(1,(now-started)/duration);
   const smooth=u*u*(3-2*u);
-  turn=direction>0?Math.PI*smooth:Math.PI*(1-smooth);
+  leafAngles[leafIndex]=start+(end-start)*smooth;
   render();
   if(u<1){raf=requestAnimationFrame(tick);return}
-  // Keep the exact last rendered angle and mesh; only logical page state changes.
-  current=target;animating=false;
-  show();
+  current=target;animating=false;show();
  };
  raf=requestAnimationFrame(tick);
 };
