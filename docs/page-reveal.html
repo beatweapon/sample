@@ -148,8 +148,8 @@ const begin=e=>{
 };
 const move=e=>{
  if(!drag||e.pointerId!==drag.pointerId)return;
- const direction=drag.start>.5?1:-1;
- paint(drag.start+direction*(e.clientX-drag.x)/(width*.7));
+ // Moving right always uncurls; moving left always lifts the sheet.
+ paint(drag.start-(e.clientX-drag.x)/(width*.7));
 };
 const end=e=>{
  if(!drag||e.pointerId!==drag.pointerId)return;
