@@ -1,91 +1,171 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HEXIM | 失われた世界の年代記</title>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HEXIM — 歴史を閉じる者</title>
 <style>
-
-:root{--paper:#e8dac0;--ink:#423324;--gold:#cda76a}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:#eddec3;background:radial-gradient(ellipse at 50% 20%,#394047 0%,#19212a 55%,#090e16 100%);font-family:Georgia,'Yu Mincho','Hiragino Mincho ProN',serif}main{max-width:1250px;margin:auto;padding:24px 18px 46px}.head{display:flex;justify-content:space-between;border-bottom:1px solid #97795270;padding:12px 0;color:#c9aa78;font-size:11px;letter-spacing:.18em}.head strong{font-size:17px;letter-spacing:.26em}header{text-align:center;padding:18px 0 4px}header small{font-size:10px;letter-spacing:.26em;color:#d1b78a}h1{font-size:clamp(22px,3.4vw,38px);font-weight:600;letter-spacing:.15em;margin:13px 0}header p{color:#b4b9bb;font-size:12px}.stage{height:min(65vw,600px);min-height:320px;display:flex;justify-content:center;align-items:center;perspective:1900px}.book{--pw:min(38vw,400px);--ph:min(49vw,500px);position:relative;width:calc(var(--pw)*2);height:var(--ph);transform:rotateX(7deg);transform-style:preserve-3d;filter:drop-shadow(0 25px 18px #000b)}.book:before{content:'';position:absolute;inset:-12px -16px;background:linear-gradient(95deg,#33251d,#755039 48%,#24160f 51%,#654631);border:2px solid #97724a;border-radius:9px;z-index:-2}.book:after{content:'';position:absolute;left:50%;top:0;bottom:0;width:18px;transform:translateX(-50%);background:linear-gradient(90deg,#4c322522,#140e0b88,#a1865b24);z-index:12;pointer-events:none}.base{position:absolute;width:50%;height:100%;top:0;background:var(--paper);box-shadow:inset 0 0 27px #76583970}.base.left{left:0}.base.right{right:0}.sheet{position:absolute;left:50%;top:0;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;transition:transform 900ms cubic-bezier(.18,.68,.19,1);cursor:grab}.sheet.turned{transform:rotateY(-180deg)}.sheet.dragging{transition:none;cursor:grabbing}.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper);box-shadow:inset 0 0 24px #70523366,0 3px 9px #0005;overflow:hidden;color:var(--ink)}.face.back{transform:rotateY(180deg)}.page{width:100%;height:100%;padding:9% 10%;border:1px solid #ae987488;display:flex;flex-direction:column;position:relative;background:repeating-linear-gradient(0deg,#fff0 0px,#80634409 3px,#fff0 7px)}.label{font:9px Georgia,serif;letter-spacing:.18em;text-align:center;color:#8d6a4c;padding-bottom:12px;border-bottom:1px solid #ab8d62}.page h2{font-size:clamp(13px,1.8vw,24px);font-weight:600;text-align:center;letter-spacing:.1em;line-height:1.8;margin:14px 0}.page p{font-size:clamp(9px,1.02vw,13px);line-height:2.15;letter-spacing:.04em;margin:6px 0;text-align:justify}.page .symbol{font-size:clamp(30px,5vw,68px);text-align:center;color:#986b47;margin:12px 0}.page .quote{border-top:1px solid #b49b75;border-bottom:1px solid #b49b75;padding:13px 0;margin:13px 0;text-align:center;font-size:clamp(9px,1.25vw,14px);line-height:2}.folio{margin-top:auto;text-align:center;color:#907351;font:10px Georgia,serif;letter-spacing:.2em}.cover{background:radial-gradient(ellipse,#6e4d36,#33231b);color:#e6ca91;justify-content:center;box-shadow:inset 0 0 35px #000b;border:8px double #997548}.cover .label{color:#ddba82;border-color:#a88955}.cover h2{color:#f1d9a7;font-size:clamp(17px,2.3vw,30px)}.cover p{text-align:center;color:#d8be91}.sigil{margin:10px auto;width:40%;aspect-ratio:1;border:3px double #d2b47d;border-radius:50%;display:grid;place-items:center;font-size:clamp(38px,7vw,85px);color:#ead7af}.status{max-width:800px;margin:24px auto 0;padding:13px 18px;border:1px solid #b08a534d;background:#111821a6;font-size:11px;line-height:1.9;color:#bfc2bf}.status strong{color:#e2c18c}.controls{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}.controls button{background:#283039;color:#e9d8b8;border:1px solid #a18b66;padding:12px 20px;font:12px 'Noto Serif JP',serif;cursor:pointer}.controls button:hover:not(:disabled){background:#534332}.controls button:disabled{opacity:.3;cursor:default}.counter{min-width:105px;text-align:center;color:#ddc092;font:12px Georgia,serif}.help{text-align:center;color:#aab5bb;font-size:11px;margin:14px 0}
-@media(max-width:700px){main{padding:12px 8px}.head{font-size:8px}.head strong{font-size:13px}.stage{height:75vw;min-height:260px}.book{--pw:45vw;--ph:62vw;transform:rotateX(3deg)}.book:before{inset:-6px}.page{padding:7%}.label{font-size:6px;padding-bottom:5px}.page h2{font-size:clamp(10px,2.55vw,16px);margin:7px 0}.page p{font-size:clamp(7px,1.8vw,11px);line-height:1.75}.page .symbol{font-size:26px;margin:4px}.page .quote{font-size:9px;padding:5px;margin:6px 0}.cover h2{font-size:14px}.sigil{font-size:32px}.folio{font-size:7px}.controls button{padding:10px}}@media(prefers-reduced-motion:reduce){.sheet{transition:none}}
-
-#curl{display:none;position:absolute;left:50%;top:0;width:50%;height:100%;z-index:55;pointer-events:none}
-#curl.active{display:block}
-.curl-source{position:fixed;left:0;top:0;width:1px;height:1px;overflow:hidden;pointer-events:none}
-.curl-source canvas{position:absolute;top:0;left:0;width:512px;height:640px}
-.curl-source .capture{width:512px;height:640px}
-.curl-source .capture .page{background:#e8dac0;padding:9% 10%;height:640px}
-.note{max-width:800px;margin:12px auto;text-align:center;font-size:11px;color:#d1b98e}
-.note button{background:#283039;border:1px solid #a18b66;color:#eddec3;padding:9px 15px;font:inherit;cursor:pointer}
-</style></head><body><main><div class="head"><strong>HEXIM</strong><span>ARCHIVE OF FALLEN WORLDS / EXPERIMENT 01</span></div><header><small>A CHRONICLE OF YOUR WORLD</small><h1>失われた世界の年代記</h1><p>世界が終わっても、歩んだ歴史は消えない。</p></header><div class="stage"><div class="book" id="book"><canvas id="curl" width="512" height="640" aria-hidden="true"></canvas><div class="base left"></div><div class="base right"></div>
-<div class="sheet"><div class="face front"><div class="page cover"><div class="label">THE LOST CHRONICLES</div><div class="sigil">✥</div><h2>失われた世界の<br>年代記</h2><p>第七世界・灰の時代</p><div class="folio">HEXIM · VOL. VII</div></div></div><div class="face back"><div class="page"><div class="label">PROLOGUE</div><div class="symbol">❦</div><h2>序章<br>世界が生まれた日</h2><p>かつて、この大地には名前すらなかった。霧の向こうに灯りがともり、旅人たちが初めて同じ焚火を囲んだ。</p><p>その小さな選択が、後にひとつの王国の運命を変えることになる。</p><div class="folio">— 1 —</div></div></div></div>
-<div class="sheet"><div class="face front"><div class="page"><div class="label">CHAPTER I · THE FOUNDING</div><div class="symbol">⚜</div><h2>第一章<br>開拓者たち</h2><p>荒れ果てた土地に最初の拠点が築かれた。木を伐り、石を積み、まだ名もない街に鐘が鳴った。</p><p>英雄たちの戦いは、この小さな街を守るために始まったのである。</p><div class="folio">— 2 —</div></div></div><div class="face back"><div class="page"><div class="label">CHAPTER II · THE EXPEDITION</div><div class="symbol">⚔</div><h2>第二章<br>霧の彼方へ</h2><p>深い霧に閉ざされた谷へ、一行は足を踏み入れた。剣は欠け、灯火は揺れ、それでも彼らは退かなかった。</p><div class="quote">「進むか、退くか。<br>その選択もまた、歴史となる。」</div><div class="folio">— 3 —</div></div></div></div>
-<div class="sheet"><div class="face front"><div class="page"><div class="label">CHAPTER III · THE CITY</div><div class="symbol">♜</div><h2>第三章<br>城壁の内側</h2><p>季節を越えて、街は変わった。灯りが増え、鍛冶の槌音が響き、旅人を迎える門が開かれた。</p><p>戦いだけが歴史ではない。誰かが帰る場所をつくったことも、確かにここに刻まれている。</p><div class="folio">— 4 —</div></div></div><div class="face back"><div class="page"><div class="label">CHAPTER IV · THE END</div><div class="symbol">☽</div><h2>終章<br>灰の降る夜</h2><p>やがて世界は静かに終わりを迎えた。勝利も敗北も、語り継ぐ者がいなければ風に消える。</p><p>だが一冊の書物だけが残された。次の世界が生まれるとき、誰かがこの頁を開くために。</p><div class="folio">— 5 —</div></div></div></div>
-<div class="sheet"><div class="face front"><div class="page"><div class="label">EPILOGUE</div><div class="symbol">✧</div><h2>そして、<br>新たな夜明けへ</h2><p>幾度世界が失われても、そこに生きた者たちの選択は残る。</p><p>この書を閉じたとき、次の歴史が始まる。</p><div class="folio">— FIN —</div></div></div><div class="face back"><div class="page cover"><div class="label">THE END OF WORLD VII</div><div class="sigil">✧</div><h2>記録は<br>受け継がれる</h2><p>THE NEXT WORLD AWAITS</p></div></div></div></div></div>
-<nav class="controls"><button id="prev" type="button">← 前のページ</button><div class="counter" id="counter" aria-live="polite">0 / 4</div><button id="next" type="button">次のページ →</button></nav><p class="help">ページ端を左右にドラッグ、またはキーボードの矢印キーで操作できます。</p><div class="status"><strong>実験の位置づけ：</strong>これはHTML-in-Canvasを使った紙のしなり演出の実験版です。全CSS/JSを1ファイルに収録し、ネット接続なしで開けます。非対応ブラウザではCSS 3Dに切り替わります。本文は架空のサンプルデータで、HEXIM本体には未接続です。</div>
-<div class="curl-source" aria-hidden="true"><canvas id="stage-a" width="512" height="640" layoutsubtree content="drawable"><div class="capture" drawable id="capture-a"></div></canvas><canvas id="stage-b" width="512" height="640" layoutsubtree content="drawable"><div class="capture" drawable id="capture-b"></div></canvas></div><p class="note" id="render-mode">ブラウザの描画機能を確認中</p><p class="note"><button type="button" id="export">単一HTMLファイルとして保存</button></p></main><script>
+:root{color-scheme:dark;--gold:#dbc49a}*{box-sizing:border-box}body{margin:0;color:#e8dfce;background:#0b1014;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif}
+header{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(15px,4vw,56px);border-bottom:1px solid #a895652a;background:#111820}
+.logo{font-size:24px;letter-spacing:.26em;color:#ead5af}.tag{font:10px system-ui,sans-serif;letter-spacing:.2em;color:#978d80;text-align:right}
+main{max-width:1500px;margin:auto;padding:20px 16px 42px}.intro{text-align:center;position:relative;z-index:1}.overline{color:#b69e71;font:11px system-ui,sans-serif;letter-spacing:.33em}.intro h1{font-weight:normal;font-size:clamp(23px,3vw,38px);letter-spacing:.16em;margin:8px 0}.intro p{font-size:12px;color:#9fa8ab;letter-spacing:.06em;margin:6px 0}
+.scene{position:relative;width:100%;aspect-ratio:1.95;max-height:680px;min-height:330px;overflow:hidden;background:radial-gradient(ellipse at 50% 62%,#26333a 0%,#101a22 58%,#0b1015 100%);border:1px solid #ab8b5130;border-radius:10px;margin-top:14px}
+#world{width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}#world.grabbing{cursor:grabbing}
+.sheen{pointer-events:none;position:absolute;inset:0;background:radial-gradient(ellipse at 51% 35%,transparent 34%,#070c1299 100%)}
+.scene-label{position:absolute;top:20px;left:24px;color:#cbb78d;font:10px system-ui,sans-serif;letter-spacing:.18em;pointer-events:none}.scene-bottom{position:absolute;bottom:17px;right:22px;color:#e1cba494;font:10px system-ui,sans-serif;letter-spacing:.12em;pointer-events:none}
+.controls{display:flex;align-items:center;justify-content:center;gap:20px;padding:19px 0;flex-wrap:wrap}.controls button{cursor:pointer;border:1px solid #977d53;background:#252b30;color:#ead6b1;padding:11px 21px;font-family:inherit;font-size:13px}.controls button:hover:enabled{background:#494234}.controls button:disabled{opacity:.28;cursor:default}#progress{min-width:115px;text-align:center;font:13px Georgia,serif;color:#dec69a;letter-spacing:.06em}
+.under{display:flex;justify-content:space-between;align-items:center;gap:16px;max-width:1040px;margin:0 auto;padding:16px 0;border-top:1px solid #ad946a35;font-size:11px;line-height:1.8;color:#98a6aa}.under strong{color:#dbbd8c;font-weight:normal}.under button{white-space:nowrap;background:transparent;border:1px solid #a98c5c;color:#e1cba3;padding:10px 15px;font-family:inherit;cursor:pointer}
+details{max-width:1040px;margin:8px auto;color:#b5b9b5;font:12px system-ui,sans-serif}summary{cursor:pointer;color:#d0b88d;padding:12px 0}details p{line-height:1.8}
+#capture{position:absolute;top:0;left:-2000px;width:512px;height:680px;pointer-events:none}#capture .page-dom{width:512px;height:680px;color:#33291d;background:#e8ddc5;padding:45px;overflow:hidden}
+#capture h2{font-size:28px;margin:28px 0;text-align:center}#capture p{font-size:16px;line-height:2.15}#capture .eyebrow{font-size:12px;text-align:center;letter-spacing:.18em;color:#8d6c45}
+@media(max-width:680px){header{height:56px}.logo{font-size:18px}.tag{font-size:8px}.scene{min-height:300px;aspect-ratio:1.15}.scene-label{font-size:8px;left:12px}.scene-bottom{font-size:8px}.under{display:block}.under button{margin-top:12px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style></head>
+<body><header><div class="logo">HEXIM</div><div class="tag">THE ARCHIVE OF FALLEN WORLDS<br>INTERACTIVE CHRONICLE · 3D EXPERIMENT</div></header>
+<main><div class="intro"><div class="overline">THE SEVENTH WORLD / THE AGE OF ASH</div><h1>失われた世界の年代記</h1><p>ひとつの世界が閉じるとき、ひとつの物語が綴られる。</p></div>
+<div class="scene"><canvas id="world" aria-label="3Dの本。左右の矢印キー、または下のボタンでページをめくれます"></canvas><div class="sheen"></div><div class="scene-label">ARCHIVE / VOLUME VII</div><div class="scene-bottom">DRAG TO TURN A PAGE · EXPERIMENT 02</div></div>
+<nav class="controls"><button type="button" id="previous">← 前の見開き</button><div id="progress" aria-live="polite">01 / 04</div><button type="button" id="following">次の見開き →</button></nav>
+<div class="under"><div><strong id="mode">描画方式を準備中…</strong><div>すべての文章・描画処理・装飾を単一HTMLに収録。オフラインで読み返せます。</div></div><button id="download" type="button">年代記をHTMLで保存</button></div>
+<details><summary>実験の仕様・制約</summary><p>3D本体、紙の厚み、影、曲面メッシュ、紙の表裏を自前のWebGLで描画します。ChromeのHTML-in-Canvas APIが使える場合は一部ページのHTMLからテクスチャを生成し、使用できない場合はCanvas 2Dでページを描きます。内容はHEXIMを想定した仮の年代記です。写真や外部フォント、外部スクリプトには依存しません。実ブラウザでの描画検証が必要なプロトタイプです。</p></details>
+</main>
+<canvas id="capture" width="512" height="680" content="drawable" layoutsubtree><div class="page-dom" id="page-dom" drawable><div class="eyebrow" id="dom-label"></div><h2 id="dom-title"></h2><p id="dom-body"></p></div></canvas>
+<script>
 (()=>{
-const sheets=[...document.querySelectorAll('.sheet')],book=document.querySelector('#book'),prev=document.querySelector('#prev'),next=document.querySelector('#next'),counter=document.querySelector('#counter');
-const curl=document.querySelector('#curl'),ctx=curl.getContext('2d'),stageA=document.querySelector('#stage-a'),stageB=document.querySelector('#stage-b'),captureA=document.querySelector('#capture-a'),captureB=document.querySelector('#capture-b'),indicator=document.querySelector('#render-mode');
-let index=0,busy=false,native=false,raf=0;
-try {native=typeof stageA.getContext('2d').drawElementImage==='function' && !matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
-indicator.textContent=native?'HTML-in-Canvas 有効：ドラッグまたはボタンでページをめくれます（オフライン対応）':'CSS 3Dモード：非対応ブラウザでもページをめくれます（オフライン対応）';
-const render=()=>{sheets.forEach((s,i)=>{s.classList.toggle('turned',i<index);s.style.zIndex=i<index?i+1:sheets.length-i+1});prev.disabled=busy||index===0;next.disabled=busy||index===sheets.length;counter.textContent=index+' / '+sheets.length};
-const cssTurn=d=>{busy=true;const sheet=sheets[d>0?index:index-1];sheet.style.zIndex=20;index+=d;sheet.classList.toggle('turned',d>0);render();setTimeout(()=>{busy=false;render()},950)};
-const prepare=()=>{
- const a=sheets[index]?.querySelector('.front .page'),b=sheets[index+1]?.querySelector('.front .page');
- if(!a||!b)return false;
- captureA.replaceChildren(a.cloneNode(true));captureB.replaceChildren(b.cloneNode(true));
- for(const [source,content] of [[stageA,captureA],[stageB,captureB]]){
-  const c=source.getContext('2d');c.clearRect(0,0,512,640);c.drawElementImage(content,0,0);
- }
- return true;
+'use strict';
+const chapters=[
+{title:'序章',subtitle:'世界が生まれた日',text:'かつて、この大地には名前すらなかった。霧の向こうに灯りがともり、旅人たちは初めて同じ焚火を囲んだ。その小さな選択が、後にひとつの国の運命を変えることになる。',kind:'tree'},
+{title:'第一章',subtitle:'開拓者たち',text:'荒れ果てた土地に最初の拠点が築かれた。木を伐り、石を積み、まだ名もない街に鐘が鳴った。人々は明日のために城壁を築き、火を守った。',kind:'town'},
+{title:'第二章',subtitle:'霧の彼方へ',text:'深い霧に閉ざされた谷へ、一行は足を踏み入れた。剣は欠け、灯火は揺れ、それでも彼らは退かなかった。進むか退くか。その選択もまた、歴史となる。',kind:'sword'},
+{title:'第三章',subtitle:'灯りの街',text:'季節を越えて街は変わった。鍛冶の槌音が響き、旅人を迎える門が開かれた。戦いだけが歴史ではない。誰かが帰る場所をつくったことも刻まれている。',kind:'town'},
+{title:'第四章',subtitle:'深淵の兆し',text:'夜空に赤い星が現れた。忘れられていた遺跡の門が開き、遠くの山々が鳴動した。それでも街の人々は、互いの名前を呼び合いながら朝を待った。',kind:'star'},
+{title:'第五章',subtitle:'最後の遠征',text:'最後の遠征に出た者たちの足跡は、雪解けの川に消えた。けれど残された者が受け取ったのは、希望を失わないという約束だった。',kind:'sword'},
+{title:'終章',subtitle:'灰の降る夜',text:'やがて世界は静かな終わりを迎えた。勝利も敗北も、語り継ぐ者がいなければ風に消える。だが一冊の書物だけが残された。',kind:'star'},
+{title:'余録',subtitle:'次の夜明けへ',text:'幾度世界が失われても、そこに生きた者たちの選択は残る。この書を閉じたとき、新しい歴史が始まる。',kind:'tree'}];
+const $=s=>document.querySelector(s),world=$('#world'),prev=$('#previous'),next=$('#following'),progress=$('#progress'),mode=$('#mode');
+const gl=world.getContext('webgl',{antialias:true,alpha:false,premultipliedAlpha:false});
+if(!gl){mode.textContent='WebGLが利用できません';world.replaceWith(Object.assign(document.createElement('div'),{textContent:'このブラウザではWebGLを利用できません。Chromeで開いてください。'}));return}
+const vert='attribute vec3 position;attribute vec2 uv;attribute float light;uniform vec2 resolution;varying vec2 vUv;varying float vLight;void main(){float depth=6.7-position.y*.42-position.z*.70;float aspect=resolution.x/resolution.y;vec2 screen=vec2(position.x*1.5/aspect,(position.y*.84-position.z*.55)*1.57-.25);gl_Position=vec4(screen,0.5,depth/5.9);vUv=uv;vLight=light;}';
+const frag='precision mediump float;uniform sampler2D texture0;uniform vec4 tint;uniform float textured;varying vec2 vUv;varying float vLight;void main(){vec4 c=mix(tint,texture2D(texture0,vUv)*tint,textured);gl_FragColor=vec4(c.rgb*(.59+.41*vLight),c.a);}';
+const shader=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s};
+const prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,vert));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,frag));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(prog));gl.useProgram(prog);
+const position=gl.getAttribLocation(prog,'position'),uv=gl.getAttribLocation(prog,'uv'),light=gl.getAttribLocation(prog,'light');
+const resolution=gl.getUniformLocation(prog,'resolution'),tint=gl.getUniformLocation(prog,'tint'),textured=gl.getUniformLocation(prog,'textured');
+const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);const stride=6*4;
+gl.enableVertexAttribArray(position);gl.vertexAttribPointer(position,3,gl.FLOAT,false,stride,0);
+gl.enableVertexAttribArray(uv);gl.vertexAttribPointer(uv,2,gl.FLOAT,false,stride,12);
+gl.enableVertexAttribArray(light);gl.vertexAttribPointer(light,1,gl.FLOAT,false,stride,20);
+gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);
+const textures=[];
+const makeTexture=canvas=>{const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,canvas);gl.generateMipmap(gl.TEXTURE_2D);return t};
+const W=512,H=680,canvas=()=>{const c=document.createElement('canvas');c.width=W;c.height=H;return c};
+const drawArt=(ctx,kind)=>{
+ ctx.save();ctx.translate(256,296);ctx.strokeStyle='#7d674f';ctx.lineWidth=3;ctx.globalAlpha=.76;
+ if(kind==='tree'){ctx.beginPath();ctx.moveTo(0,85);ctx.lineTo(0,-45);for(let i=-3;i<=3;i++){ctx.moveTo(0,-18);ctx.quadraticCurveTo(i*25,-65,i*40,-95);ctx.moveTo(i*32,-80);ctx.lineTo(i*47,-113)}ctx.stroke();ctx.beginPath();ctx.ellipse(0,-77,120,60,0,0,7);ctx.stroke()}
+ if(kind==='town'){for(let i=-2;i<=2;i++){const x=i*47;ctx.strokeRect(x-17,18-i%2*13,35,65+i%2*13);ctx.beginPath();ctx.moveTo(x-25,18-i%2*13);ctx.lineTo(x,0-i%2*13);ctx.lineTo(x+25,18-i%2*13);ctx.stroke()}ctx.beginPath();ctx.moveTo(-140,85);ctx.lineTo(140,85);ctx.stroke()}
+ if(kind==='sword'){ctx.rotate(-.55);ctx.strokeRect(-8,-115,16,162);ctx.beginPath();ctx.moveTo(-8,-115);ctx.lineTo(0,-151);ctx.lineTo(8,-115);ctx.moveTo(-65,42);ctx.lineTo(65,42);ctx.moveTo(0,47);ctx.lineTo(0,97);ctx.stroke()}
+ if(kind==='star'){for(let i=0;i<12;i++){const a=i*Math.PI/6;ctx.beginPath();ctx.moveTo(Math.cos(a)*40,Math.sin(a)*40);ctx.lineTo(Math.cos(a)*125,Math.sin(a)*125);ctx.stroke()}ctx.beginPath();ctx.arc(0,0,38,0,Math.PI*2);ctx.stroke()}
+ ctx.restore();
 };
-const paintCurl=progress=>{
- const w=512,h=640;
- ctx.clearRect(0,0,w,h);
- ctx.drawImage(stageB,0,0,w,h);
- // Draw the remaining flat area of the page.
- const edge=Math.max(0,w*(1-progress));
- if(edge>1)ctx.drawImage(stageA,0,0,edge,h,0,0,edge,h);
- // The curling paper is approximated by vertical slices of a cylinder.
- const radius=Math.min(100,Math.max(8,progress*w*.27));
- const slices=35;
- for(let i=0;i<slices;i++){
-  const u=i/slices,v=(i+1)/slices;
-  const x=edge+radius*u;
-  if(x>=w)break;
-  const x2=Math.min(w,edge+radius*v),width=x2-x;
-  const theta=Math.asin(Math.min(.999,(u+v)/2));
-  const original=edge+radius*(Math.PI-theta);
-  const sourceX=Math.max(0,Math.min(w-2,original));
-  ctx.drawImage(stageA,sourceX,0,Math.min(3,w-sourceX),h,x,0,width+1,h);
-  const shade=.15+.5*u;
-  ctx.fillStyle='rgba(42,25,13,'+(shade*.5)+')';ctx.fillRect(x,0,width+1,h);
- }
- if(edge<w){const gradient=ctx.createLinearGradient(edge-18,0,edge+radius+12,0);gradient.addColorStop(0,'rgba(30,18,10,0)');gradient.addColorStop(.4,'rgba(30,18,10,.18)');gradient.addColorStop(1,'rgba(255,244,220,0)');ctx.fillStyle=gradient;ctx.fillRect(Math.max(0,edge-18),0,radius+30,h);}
+const drawPage=(item,n)=>{
+ const c=canvas(),ctx=c.getContext('2d');
+ ctx.fillStyle='#e8dbc0';ctx.fillRect(0,0,W,H);for(let i=0;i<1400;i++){const x=(i*127.1)%W,y=(i*83.73)%H;ctx.fillStyle=i%3?'#856b4820':'#fff8e324';ctx.fillRect(x,y,2,2)}
+ const shade=ctx.createLinearGradient(0,0,W,0);shade.addColorStop(0,'#6a4e2526');shade.addColorStop(.14,'#ffffff00');shade.addColorStop(.90,'#ffffff00');shade.addColorStop(1,'#8d704326');ctx.fillStyle=shade;ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle='#9c8159';ctx.lineWidth=1;ctx.strokeRect(34,31,W-68,H-62);
+ ctx.fillStyle='#7c684a';ctx.font='14px Georgia';ctx.textAlign='center';ctx.fillText('THE CHRONICLES OF HEXIM',W/2,70);
+ ctx.beginPath();ctx.moveTo(72,83);ctx.lineTo(W-72,83);ctx.stroke();
+ ctx.font='18px Georgia';ctx.fillText(item.title,256,123);
+ ctx.fillStyle='#382b20';ctx.font='bold 33px "Yu Mincho","Hiragino Mincho ProN",serif';ctx.fillText(item.subtitle,256,166);
+ drawArt(ctx,item.kind);
+ ctx.fillStyle='#4a3b2b';ctx.font='19px "Yu Mincho","Hiragino Mincho ProN",serif';ctx.textAlign='left';
+ let lines=[],line='';for(const char of item.text){if(ctx.measureText(line+char).width>390){lines.push(line);line=''}line+=char}if(line)lines.push(line);
+ lines.slice(0,9).forEach((s,i)=>ctx.fillText(s,60,451+i*31));
+ ctx.strokeStyle='#a48a5d';ctx.beginPath();ctx.moveTo(60,625);ctx.lineTo(452,625);ctx.stroke();ctx.font='15px Georgia';ctx.textAlign='center';ctx.fillText(String(n+1).padStart(2,'0'),256,651);
+ return c;
 };
-const curlTurn=()=>{
- busy=true;render();
- try{if(!prepare())throw Error('Pages missing')}catch(e){console.warn('Canvas capture unavailable, using CSS',e);native=false;indicator.textContent='CSS 3Dモード（HTML-in-Canvas描画失敗のため切替）';busy=false;cssTurn(1);return}
- curl.classList.add('active');
- const started=performance.now();
- const frame=now=>{
-  const t=Math.min(1,(now-started)/1050),p=t*t*(3-2*t);
-  paintCurl(p);
-  if(t<1){raf=requestAnimationFrame(frame);return}
-  curl.classList.remove('active');index++;busy=false;render();
+let tex=chapters.map((c,i)=>makeTexture(drawPage(c,i))),captureSupported=typeof CanvasRenderingContext2D.prototype.drawElementImage==='function';
+mode.textContent=captureSupported?'HTML-in-Canvas 対応 / WebGL 3Dページメッシュ':'Canvas組版 / WebGL 3Dページメッシュ（オフライン）';
+// Keep source pages as real HTML; capture into the texture when the native API is available.
+if(captureSupported){
+ try{
+ const source=$('#capture'),dom=$('#page-dom'),ctx=source.getContext('2d');
+ const page=chapters[0];$('#dom-label').textContent=page.title;$('#dom-title').textContent=page.subtitle;$('#dom-body').textContent=page.text;
+ source.onpaint=()=>{
+  try{ctx.clearRect(0,0,W,H);ctx.drawElementImage(dom,0,0);const t=makeTexture(source);textures.push(t);}catch(e){console.warn('Native HTML capture failed; Canvas page remains usable',e)}
  };
- raf=requestAnimationFrame(frame);
+ }catch(e){console.warn(e)}
+}
+const rgba=(hex,a=1)=>{const n=parseInt(hex.slice(1),16);return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255,a]};
+const vertices=[],quad=(a,b,c,d,l=1)=>{for(const [pt,u,v] of [[a,0,0],[b,1,0],[c,1,1],[a,0,0],[c,1,1],[d,0,1]])vertices.push(...pt,u,v,l)};
+const draw=(points,color,texture=null,lightValue=1)=>{const data=[];for(const vertex of points)data.push(...vertex);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(data),gl.DYNAMIC_DRAW);gl.uniform4fv(tint,new Float32Array(color));gl.uniform1f(textured,texture?1:0);gl.bindTexture(gl.TEXTURE_2D,texture||null);gl.drawArrays(gl.TRIANGLES,0,data.length/6)};
+const rectangle=(x0,x1,z0,z1,y,color,texture=null,L=1)=>{
+ vertices.length=0;quad([x0,y,z0],[x1,y,z0],[x1,y,z1],[x0,y,z1],L);draw(vertices,color,texture);
 };
-const move=d=>{if(busy||index+d<0||index+d>sheets.length)return;if(native&&d===1&&index<sheets.length-1)curlTurn();else cssTurn(d)};
-prev.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
-document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')move(1);if(e.key==='ArrowLeft')move(-1)});
-let start=null;
-book.addEventListener('pointerdown',e=>{if(e.button!==0||busy)return;start=e.clientX;book.setPointerCapture(e.pointerId)});
-book.addEventListener('pointerup',e=>{if(start===null)return;const diff=e.clientX-start;start=null;if(Math.abs(diff)>35)move(diff<0?1:-1);else{const rect=book.getBoundingClientRect();move(e.clientX<rect.left+rect.width/2?-1:1)}});
-book.addEventListener('pointercancel',()=>{start=null});
-document.querySelector('#export').addEventListener('click',()=>{
- const source='<!doctype html>\n'+document.documentElement.outerHTML;
- const link=document.createElement('a'),url=URL.createObjectURL(new Blob([source],{type:'text/html;charset=utf-8'}));
- link.href=url;link.download='hexim-chronicle.html';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-});
-render();
+const side=(x0,x1,z0,z1,y0,y1,color)=>{vertices.length=0;quad([x0,y0,z0],[x1,y0,z0],[x1,y1,z1],[x0,y1,z1],.8);draw(vertices,color)};
+const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
+ const count=44,width=1.39,front=-.99,rear=.99,data=[];
+ for(let i=0;i<count;i++){
+  const u0=i/count,u1=(i+1)/count;
+  const point=(u,z)=>{
+   let x=sideSign*(.045+u*width),Y=y+.026*Math.sin(Math.PI*u)+.025*u;
+   if(angle){const radius=.19*Math.sin(angle);x=.045+Math.cos(angle)*width*u;Y+=Math.sin(angle)*width*u*.82+radius*Math.sin(Math.PI*u*2)}
+   return [x,Y,z];
+  };
+  const a=point(u0,front),b=point(u1,front),c=point(u1,rear),d=point(u0,rear);
+  // Two-sided mesh: reverse texture U for flipped back face.
+  const lightValue=.85+.15*Math.cos(angle)+.08*Math.sin(u0*5+angle);
+  for(const [p,U,V] of [[a,u0,0],[b,u1,0],[c,u1,1],[a,u0,0],[c,u1,1],[d,u0,1]]){
+   data.push(...p,back?1-U:U,V,lightValue)
+  }
+ }
+ draw(data,rgba('#fff6e4'),texture);
+};
+let current=0,turn=0,from=0,to=0,animating=false,drag=null,raf=null;
+const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height)};
+addEventListener('resize',resize);resize();
+const render=()=>{
+ gl.clearColor(.045,.065,.079,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+ // Wood grain: textured canvas generated procedurally in JS (no file request).
+ rectangle(-5.5,5.5,-4,3.8,-.18,rgba('#594332'));
+ // Table grain boards
+ for(let i=-6;i<=6;i++){rectangle(i*.86-.02,i*.86,-3.9,3.7,-.176,rgba('#241710',.34))}
+ // Book's ground shadow
+ rectangle(-1.55,1.55,-1.16,1.16,-.135,rgba('#080909',.7));
+ // Cover boards & raised gold frame
+ rectangle(-1.52,1.52,-1.12,1.12,-.065,rgba('#30231d'));
+ rectangle(-1.45,1.45,-1.055,1.055,-.048,rgba('#86573d'));
+ rectangle(-1.42,1.42,-1.02,1.02,-.035,rgba('#403026'));
+ // Stacked page edges and book binding
+ for(let i=0;i<8;i++){let y=-.015+i*.014;rectangle(-1.41,1.41,-.99,.99,y,rgba(i%2?'#d7c7a6':'#f0dfc1'))}
+ rectangle(-.065,.065,-1.055,1.055,.104,rgba('#5c3b2a'));
+ for(let i=0;i<5;i++){rectangle(-.033,.033,-1,1,.11+i*.003,rgba('#b48c55',.4))}
+ // Current spread: back pages remain visible as turning sheet lifts.
+ const isTurning=turn>0&&turn<Math.PI-.001;
+ sheet(null,-1,.14,tex[current*2]);
+ if(isTurning){
+  sheet(null,1,.14,tex[Math.min(chapters.length-1,current*2+3)]);
+  // Back side first, then front; depth test chooses the visible surface.
+  sheet(null,1,.16,tex[Math.min(chapters.length-1,current*2+2)],turn,true);
+  sheet(null,1,.162,tex[Math.min(chapters.length-1,current*2+1)],turn,false);
+ }else{
+  sheet(null,1,.14,tex[current*2+1]);
+ }
+ // vignette is CSS layer above
+};
+const show=()=>{progress.textContent=String(current+1).padStart(2,'0')+' / 04';prev.disabled=animating||current===0;next.disabled=animating||current===3};
+const transition=(target,initial=0)=>{
+ if(animating||target<0||target>3||target===current)return;
+ if(target<current){current=target;turn=0;show();render();return}
+ animating=true;from=0;to=Math.PI;const start=performance.now();show();
+ const tick=t=>{const u=Math.min(1,(t-start)/1350),smooth=u*u*(3-2*u);turn=Math.max(.0001,to*smooth);render();if(u<1){raf=requestAnimationFrame(tick)}else{turn=0;current=target;animating=false;show();render()}};
+ raf=requestAnimationFrame(tick);
+};
+prev.onclick=()=>transition(current-1);next.onclick=()=>transition(current+1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')transition(current-1);if(e.key==='ArrowRight')transition(current+1)});
+world.addEventListener('pointerdown',e=>{if(animating)return;drag={x:e.clientX};world.classList.add('grabbing');world.setPointerCapture(e.pointerId)});
+world.addEventListener('pointerup',e=>{world.classList.remove('grabbing');if(!drag)return;const diff=e.clientX-drag.x;drag=null;if(diff< -35)transition(current+1);else if(diff>35)transition(current-1);else{const rect=world.getBoundingClientRect();transition(current+(e.clientX>rect.left+rect.width/2?1:-1))}});
+world.addEventListener('pointercancel',()=>{drag=null;world.classList.remove('grabbing')});
+$('#download').onclick=()=>{
+ const clone=document.documentElement.cloneNode(true);clone.querySelector('#capture').removeAttribute('style');const file='<!doctype html>\n'+clone.outerHTML;
+ const url=URL.createObjectURL(new Blob([file],{type:'text/html;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='hexim-chronicle-07.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
+};
+show();render();
 })();
 </script></body></html>
