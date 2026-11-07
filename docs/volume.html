@@ -18,11 +18,11 @@ details{max-width:1040px;margin:8px auto;color:#b5b9b5;font:12px system-ui,sans-
 #capture h2{font-size:28px;margin:28px 0;text-align:center}#capture p{font-size:16px;line-height:2.15}#capture .eyebrow{font-size:12px;text-align:center;letter-spacing:.18em;color:#8d6c45}
 @media(max-width:680px){header{height:56px}.logo{font-size:18px}.tag{font-size:8px}.scene{min-height:300px;aspect-ratio:1.15}.scene-label{font-size:8px;left:12px}.scene-bottom{font-size:8px}.under{display:block}.under button{margin-top:12px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-.sample-switch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:11px system-ui,sans-serif;letter-spacing:0}.sample-switch a{display:inline-block;text-decoration:none;color:#dbbf90;border:1px solid #ad906480;border-radius:5px;padding:8px 11px;white-space:nowrap}.sample-switch a[aria-current="page"]{background:#b18c55;color:#16191a;border-color:#d0ae77;font-weight:700}.sample-switch a:hover:not([aria-current="page"]){background:#7d654344}@media(max-width:650px){.sample-switch a{padding:6px 8px;font-size:10px}}</style></head>
+.sample-switch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:11px system-ui,sans-serif;letter-spacing:0}.sample-switch a{display:inline-block;text-decoration:none;color:#dbbf90;border:1px solid #ad906480;border-radius:5px;padding:8px 11px;white-space:nowrap}.sample-switch a[aria-current="page"]{background:#b18c55;color:#16191a;border-color:#d0ae77;font-weight:700}.sample-switch a:hover:not([aria-current="page"]){background:#7d654344}@media(max-width:650px){.sample-switch a{padding:6px 8px;font-size:10px}} .page-jump{display:flex;align-items:center;gap:10px;font:11px system-ui,sans-serif;color:#d5c19a}.page-jump input{accent-color:#c5a46d;width:110px;cursor:pointer}</style></head>
 <body><header><div class="logo">HEXIM</div><nav class="sample-switch" aria-label="サンプル切り替え"><a href="./classic.html">初期版 · CSS 3D</a><a href="./index.html">安定版 · WebGL</a><a href="./volume.html" aria-current="page">質感実験 · Volume</a></nav></header>
 <main><div class="intro"><div class="overline">MATERIAL STUDY / THE AGE OF ASH</div><h1>失われた世界の年代記</h1><p>紙のしなり・端の厚み・光と影を実験する別バージョン。</p></div>
 <div class="scene"><canvas id="world" aria-label="3Dの本。左右の矢印キー、または下のボタンでページをめくれます"></canvas><div class="sheen"></div><div class="scene-label">ARCHIVE / VOLUME VII</div><div class="scene-bottom">DRAG TO TURN · EXPERIMENT 03</div></div>
-<nav class="controls"><button type="button" id="previous">← 前の見開き</button><div id="progress" aria-live="polite">01 / 04</div><button type="button" id="following">次の見開き →</button></nav>
+<nav class="controls"><button type="button" id="previous">← 前の見開き</button><div id="progress" aria-live="polite">01 / 04</div><button type="button" id="following">次の見開き →</button><label class="page-jump" for="page-jump">見開きへ <input id="page-jump" aria-label="見開きへ直接移動" type="range" min="1" max="4" step="1" value="1"></label></nav>
 <div class="under"><div><strong id="mode">描画方式を準備中…</strong><div>すべての文章・描画処理・装飾を単一HTMLに収録。オフラインで読み返せます。</div></div><button id="download" type="button">年代記をHTMLで保存</button></div>
 <details><summary>実験の仕様・制約</summary><p>3D本体、紙の厚み、光と影、しなる曲面メッシュをWebGLで描画します。ChromeのHTML-in-Canvas APIが使える場合は最初のページのHTMLからテクスチャを生成し、使用できない場合はCanvas 2Dでページを描きます。内容はHEXIMを想定した仮の年代記です。写真や外部フォント、外部スクリプトには依存しません。実ブラウザでの描画検証が必要なプロトタイプです。</p></details>
 </main>
@@ -139,7 +139,8 @@ const paperEdge=(sideSign,y,angle,turnDirection=1)=>{
 const spreadCount=chapters.length/2,leafCount=spreadCount-1;
 const leafAngles=Array(leafCount).fill(0);
 const leafDirections=Array(leafCount).fill(1);
-let current=0,animating=false,drag=null,raf=null;
+let current=0,desired=0,animating=false,drag=null,raf=null;
+const jump=document.querySelector("#page-jump");
 const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height);};
 addEventListener('resize',resize);resize();
 const render=()=>{
@@ -173,17 +174,22 @@ const render=()=>{
 };
 addEventListener('resize',render);
 const show=()=>{
- progress.textContent=String(current+1).padStart(2,'0')+' / '+String(spreadCount).padStart(2,'0');
- prev.disabled=animating||current===0;next.disabled=animating||current===spreadCount-1;
+ const display=desired===current?current:desired;
+ progress.textContent=String(display+1).padStart(2,'0')+' / '+String(spreadCount).padStart(2,'0')+(desired!==current?' · 移動中':'');
+ // Keep accepting input while the current physical leaf is moving.
+ prev.disabled=desired===0;next.disabled=desired===spreadCount-1;
+ jump.value=String(desired+1);
 };
-const transition=target=>{
- if(animating||target<0||target>=spreadCount||Math.abs(target-current)!==1)return;
- const direction=Math.sign(target-current),leafIndex=direction>0?current:target;
- // Direction is specific to this interaction, not inferred from the angle.
- leafDirections[leafIndex]=direction;
+const advance=()=>{
+ if(animating||desired===current)return;
+ animating=true;
+ const direction=Math.sign(desired-current);
+ const leafIndex=direction>0?current:current-1;
  const start=leafAngles[leafIndex],end=direction>0?Math.PI:0;
- const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1350;
- animating=true;show();
+ leafDirections[leafIndex]=direction;
+ // Normal browsing is brisk; repeated taps accelerate the queued leaves.
+ const queued=Math.abs(desired-current)>1;
+ const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:(queued?230:480);
  const started=performance.now();
  const tick=now=>{
   const u=duration===0?1:Math.min(1,(now-started)/duration);
@@ -191,14 +197,30 @@ const transition=target=>{
   leafAngles[leafIndex]=start+(end-start)*smooth;
   render();
   if(u<1){raf=requestAnimationFrame(tick);return}
-  current=target;animating=false;show();
+  current+=direction;
+  animating=false;
+  show();
+  advance();
  };
  raf=requestAnimationFrame(tick);
 };
-prev.onclick=()=>transition(current-1);next.onclick=()=>transition(current+1);
-document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')transition(current-1);if(e.key==='ArrowRight')transition(current+1)});
-world.addEventListener('pointerdown',e=>{if(animating)return;drag={x:e.clientX};world.classList.add('grabbing');world.setPointerCapture(e.pointerId)});
-world.addEventListener('pointerup',e=>{world.classList.remove('grabbing');if(!drag)return;const diff=e.clientX-drag.x;drag=null;if(diff< -35)transition(current+1);else if(diff>35)transition(current-1);else{const rect=world.getBoundingClientRect();transition(current+(e.clientX>rect.left+rect.width/2?1:-1))}});
+const turnBy=offset=>{
+ desired=Math.max(0,Math.min(spreadCount-1,desired+offset));
+ show();advance();
+};
+const seek=target=>{
+ if(!Number.isInteger(target)||target<0||target>=spreadCount)return;
+ // Direct jump deliberately skips animation and preserves the physical leaf pose.
+ if(raf!==null)cancelAnimationFrame(raf);
+ raf=null;animating=false;current=target;desired=target;
+ for(let i=0;i<leafCount;i++){leafAngles[i]=i<target?Math.PI:0;leafDirections[i]=1}
+ show();render();
+};
+prev.onclick=()=>turnBy(-1);next.onclick=()=>turnBy(1);
+jump.addEventListener('input',()=>seek(Number(jump.value)-1));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();turnBy(-1)}if(e.key==='ArrowRight'){e.preventDefault();turnBy(1)}});
+world.addEventListener('pointerdown',e=>{drag={x:e.clientX};world.classList.add('grabbing');world.setPointerCapture(e.pointerId)});
+world.addEventListener('pointerup',e=>{world.classList.remove('grabbing');if(!drag)return;const diff=e.clientX-drag.x;drag=null;if(diff< -35)turnBy(1);else if(diff>35)turnBy(-1);else{const rect=world.getBoundingClientRect();turnBy(e.clientX>rect.left+rect.width/2?1:-1)}});
 world.addEventListener('pointercancel',()=>{drag=null;world.classList.remove('grabbing')});
 $('#download').onclick=()=>{
  const clone=document.documentElement.cloneNode(true);clone.querySelector('#capture').removeAttribute('style');const file='<!doctype html>\n'+clone.outerHTML;
