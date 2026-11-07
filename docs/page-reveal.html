@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HEXIM — ページの正体</title>
+<style>
+:root{--paper:#eee4cf;--ink:#392e25;--accent:#80603b}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif}
+button{font:inherit;cursor:pointer}a{color:#805332;text-underline-offset:4px}
+header{position:relative;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:10px clamp(14px,3vw,48px);border-bottom:1px solid #ab92684d;background:#eee4cf}
+.brand{letter-spacing:.25em;font-size:22px;color:#5b3e22}nav{display:flex;gap:6px;flex-wrap:wrap}nav a{font:11px system-ui,sans-serif;text-decoration:none;border:1px solid #bfa882;padding:7px 9px;border-radius:3px}nav a[aria-current]{background:#765637;color:#fff}
+.lab{padding:7px clamp(20px,4vw,64px);font:11px system-ui,sans-serif;color:#896f50;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #ac956636}
+.viewport{position:relative;min-height:min(760px,82vh);height:clamp(590px,77vh,790px);perspective:1800px;overflow:hidden;background:var(--paper)}
+.document{width:100%;height:100%;background:linear-gradient(95deg,#ddcaa99c 0,#f3ead8 4%,#f3ead8 96%,#e0ca9f 100%);position:relative;overflow:hidden}
+.document:before{content:"";position:absolute;top:20px;bottom:20px;left:20px;right:20px;border:1px solid #c8b28b;pointer-events:none}
+.document .content{width:100%;height:100%;position:relative;display:flex;flex-direction:column;padding:clamp(25px,5.5vw,67px) clamp(24px,8vw,116px)}
+.kicker{font-size:11px;letter-spacing:.25em;color:#8f7350;border-bottom:1px solid #bba47c;padding-bottom:17px}
+.document h1{font-weight:normal;letter-spacing:.12em;font-size:clamp(28px,5vw,57px);margin:32px 0 12px;color:#513a26}
+.stamp{font:12px system-ui,sans-serif;color:#9b7d55;letter-spacing:.09em}
+.columns{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(22px,6vw,78px);margin-top:clamp(22px,4vh,43px);flex:1}
+.columns p{line-height:2.16;letter-spacing:.025em;font-size:clamp(13px,1.36vw,16px);margin:0 0 17px}
+.initial:first-letter{font-size:2.7em;float:left;line-height:1;margin:7px 12px 0 0;color:#915e38}
+.map{position:relative;height:190px;border:1px solid #c0a67c;background:#e3d2ae;overflow:hidden;margin-bottom:18px}.map svg{height:100%;width:100%}
+.aside-heading{font-size:11px;letter-spacing:.2em;color:#896742;border-bottom:1px solid #b89e78;padding:0 0 10px;margin-bottom:14px}.mini{font-size:12px!important;color:#78634c}
+.folio{display:flex;justify-content:space-between;border-top:1px solid #bea682;padding-top:12px;font:11px Georgia,serif;color:#937650;letter-spacing:.13em}
+.below{background:linear-gradient(110deg,#ebddbf,#f5ebd8);position:absolute;inset:0;z-index:0}
+.below .content{padding-left:clamp(24px,8vw,116px)}
+#live{z-index:2}
+#curved{position:absolute;inset:0;z-index:7;pointer-events:none;display:none;transform-style:preserve-3d}
+#curved.on{display:block}
+.strip{position:absolute;top:0;height:100%;overflow:hidden;transform-style:preserve-3d;will-change:transform;backface-visibility:visible}
+.strip .face{position:absolute;top:0;left:0;height:100%;backface-visibility:hidden;overflow:hidden}
+.strip .reverse{position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg) translateZ(1px);background:linear-gradient(95deg,#d0b78a,#f1e4c9 25%,#e8d5af 80%,#ae8c5a);border-top:1px solid #bea477;border-bottom:1px solid #bea477}
+.strip .reverse:before{content:"";position:absolute;inset:12px 0;border-top:1px solid #bca27b;border-bottom:1px solid #bca27b}
+#contact{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#23150b66,transparent 40%);opacity:0}
+.grab{position:absolute;z-index:14;top:0;bottom:0;right:0;width:min(7vw,72px);cursor:grab;touch-action:none;background:linear-gradient(90deg,transparent,#a68a5930);opacity:0;transition:opacity .2s}
+.viewport:hover .grab,.grab:focus-visible{opacity:1}
+.viewport.turned .grab{right:auto;left:0;cursor:grab;background:linear-gradient(90deg,#a68a5940,transparent)}
+.viewport.dragging .grab{cursor:grabbing}
+.grab:after{content:"";position:absolute;right:8px;top:50%;width:2px;height:62px;background:#9474514a;transform:translateY(-50%)}
+.viewport.turned .grab:after{right:auto;left:8px}
+.toolbar{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;background:#eee4cf;border-top:1px solid #c8b28a;padding:15px}
+.toolbar button{border:1px solid #aa8d64;color:#5d442c;background:transparent;padding:10px 15px}.toolbar button:hover:not(:disabled){background:#e0d1b3}.toolbar button:disabled{opacity:.35;cursor:not-allowed}
+.toolbar output{font:12px system-ui,sans-serif;min-width:135px;text-align:center;color:#7d6851}
+.note{max-width:960px;margin:0 auto;padding:24px 20px 44px;font:13px/1.9 system-ui,sans-serif;color:#796b5c}.note strong{color:#54412b}
+#capture{position:fixed;left:-150vw;top:0;width:1200px;height:760px;pointer-events:none}#capture .capture-node{width:1200px;height:760px}
+@media(max-width:720px){.viewport{height:680px}.columns{grid-template-columns:1fr;gap:6px;margin-top:18px}.map{height:105px;margin-bottom:8px}.columns p{font-size:12px;line-height:1.7;margin-bottom:9px}.document h1{font-size:28px;margin:16px 0 6px}.document .content{padding:30px 32px}.kicker{font-size:9px}.stamp,.mini{font-size:10px!important}.aside-heading{margin:2px 0 5px}.folio{font-size:9px}}
+</style></head>
+<body>
+<header><div class="brand">HEXIM</div><nav aria-label="実験版"><a href="./index.html">WebGL</a><a href="./volume.html">質感実験</a><a href="./metamorphosis.html">変形実験</a><a href="./living-page.html">つかめる年代記</a><a href="./page-reveal.html" aria-current="page">ページの正体</a></nav></header>
+<div class="lab"><span>THE SEVENTH WORLD · THE AGE OF ASH</span><span>ARCHIVE / AN INTERACTIVE DOCUMENT</span></div>
+<main class="viewport" id="viewport" aria-label="年代記のWebページ。右端を左へドラッグすると紙が持ち上がります">
+<section class="document below" id="beneath"><div class="content"><div class="kicker">THE CHRONICLE OF HEXIM · CHAPTER II</div><h1>築かれた王国</h1><div class="stamp">THE YEAR 047 — KINGDOM OF THE EAST</div><div class="columns"><div><p class="initial">霧の向こうに新しい街が見えた。壁を築き、地図を広げ、人々が道に名前を与えた。</p><p>王国は剣だけで成立したのではない。明日も火を守ると決めた人々がいたから、街は数百の夜を越えた。</p><p><a href="#about">歴史を読む</a></p></div><div><div class="aside-heading">THE NEXT CHAPTER</div><p>紙をつかんで開くと、その下にも普通のHTML文書がある。</p></div></div><div class="folio"><span>THE LOST CHRONICLES</span><span>— 02 —</span></div></div></section>
+<section class="document" id="live"><div class="content" id="actual-content"><div class="kicker">THE CHRONICLE OF HEXIM · CHAPTER I</div><h1>最初の灯火</h1><div class="stamp">THE YEAR 001 — THE FIRST EMBERS</div><div class="columns"><div><p class="initial">名もなき旅人たちが荒野の果てに最初の火を灯した。それは小さな光だったが、やがて街道が伸び、鐘が鳴り、新しい町が生まれた。</p><p>剣を携えた者、鍛冶場を守った者、遠くの土地へ出かけた者。それぞれの選択がひとつの世界を形づくっていった。</p><p>その記録は、地図よりも先に人々の記憶に刻まれた。</p><p><a href="#about">年代記の由来について</a></p></div><aside><div class="aside-heading">MAP OF THE FIRST AGE</div><div class="map"><svg viewBox="0 0 400 200" role="img" aria-label="第七世界の古地図"><g fill="none" stroke="#95774f" stroke-width="3" opacity=".8"><path d="M0 60Q100 20 150 100T400 65"/><path d="M0 155Q100 110 190 140T400 115"/><path d="M55 0Q70 80 145 100T230 200" stroke-dasharray="6 8"/></g><g fill="#97724a"><circle cx="150" cy="100" r="9"/><path d="M255 86l20-24 20 24v38h-40z"/></g><g fill="#695234" font-size="15" font-family="serif"><text x="117" y="126">ASH VILLAGE</text><text x="237" y="146">CITADEL</text></g></svg></div><p class="mini">最初に建てられた拠点と、英雄たちの足跡。</p></aside></div><div class="folio"><span>THE LOST CHRONICLES</span><span>— 01 —</span></div></div></section>
+<div id="contact"></div><div id="curved" aria-hidden="true"></div><div id="grab" class="grab" role="button" tabindex="0" aria-label="右端をドラッグしてページをめくる"></div></main>
+<div class="toolbar"><button id="previous" type="button" disabled>← 戻す</button><output id="status">01 / 02 · HTML文書</output><button id="following" type="button">次のページ →</button><button id="save" type="button">単一HTMLを保存</button></div>
+<p class="note" id="about"><strong>何が起きる？</strong>まず文字を選択したりリンクをクリックしてください。その後、ページの右端を左へドラッグすると、このWebページの文字や図が一緒に曲がり、下のページが現れます。途中で戻すこともできます。これは動画ではなくHTMLから生まれる変形の実験です。</p>
+<canvas id="capture" layoutsubtree content="drawable"><div class="capture-node" drawable id="capture-node"></div></canvas>
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s);
+const viewport=$('#viewport'), live=$('#live'), curved=$('#curved'), beneath=$('#beneath'), grab=$('#grab'), shadow=$('#contact'), status=$('#status');
+let progress=0,target=0,drag=null,animating=false,frame=0,slices=[],width=0,height=0;
+const count=42;
+const capture=$('#capture'),captureNode=$('#capture-node');
+const ctx=capture.getContext('2d');
+const native=typeof ctx?.drawElementImage==='function';
+let nativeBitmap=null;
+const paintNative=()=>{
+ if(!native)return;
+ try{
+  captureNode.replaceChildren(live.cloneNode(true));
+  const w=Math.ceil(viewport.clientWidth),h=Math.ceil(viewport.clientHeight);
+  capture.width=w;capture.height=h;
+  ctx.drawElementImage(captureNode,0,0);
+  const image=document.createElement('canvas');image.width=w;image.height=h;
+  image.getContext('2d').drawImage(capture,0,0);nativeBitmap=image;
+ }catch(e){nativeBitmap=null}
+};
+// Generate slices from the actual page markup. The text never becomes a video,
+// and the flat view is always the original selectable HTML.
+const build=()=>{
+ width=viewport.clientWidth;height=viewport.clientHeight;
+ curved.replaceChildren();slices=[];
+ const sw=width/count;
+ for(let i=0;i<count;i++){
+  const element=document.createElement('div');element.className='strip';
+  element.style.width=(sw+1)+'px';element.style.left='0';
+  const face=document.createElement('div');face.className='face';
+  face.style.width=(sw+1)+'px';
+  if(nativeBitmap){
+   const image=document.createElement('canvas');
+   image.width=Math.ceil(sw)+2;image.height=Math.ceil(height);
+   const canvasCtx=image.getContext('2d');
+   canvasCtx.drawImage(nativeBitmap,i*sw,0,sw,height,0,0,sw,height);
+   image.style.cssText='display:block;width:'+sw+'px;height:100%';
+   face.append(image);
+  }else{
+   const clone=live.cloneNode(true);clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+   clone.style.width=width+'px';clone.style.height=height+'px';clone.style.position='absolute';clone.style.left=(-i*sw)+'px';clone.style.top='0';clone.style.pointerEvents='none';
+   face.append(clone);
+  }
+  const reverse=document.createElement('div');reverse.className='reverse';
+  element.append(face,reverse);curved.append(element);slices.push(element);
+ }
+};
+const paint=t=>{
+ progress=Math.min(1,Math.max(0,t));
+ const k=progress,w=width;
+ for(let i=0;i<count;i++){
+  const u=i/count,cent=(i+.5)/count;
+  // Flat webpage -> lifted curved paper -> a turned sheet occupying the left half.
+  const x=w*((1-k)*u + k*.49*(1-u));
+  const fold=Math.sin(Math.PI*k);
+  const lift=fold*Math.pow(u,1.8);
+  const y= -lift*height*.09;
+  const z=lift*125;
+  const angle=-180*k*(.48+.52*u);
+  const stretch=1-.29*k;
+  const el=slices[i];
+  el.style.transform='translate3d('+x+'px,'+y+'px,'+z+'px) rotateY('+angle+'deg) scaleX('+stretch+')';
+  el.style.filter='brightness('+(1-.18*fold*u)+')';
+ }
+ const turning=k>.001||target===1;
+ curved.classList.toggle('on',turning);
+ live.style.visibility=turning?'hidden':'visible';
+ viewport.classList.toggle('turned',k>.995);
+ shadow.style.opacity=String(Math.sin(Math.PI*k)*.75);
+ shadow.style.transform='translateX('+(-k*width*.32)+'px)';
+ status.textContent=(k>.995?'02 / 02 · めくった紙は左に残っています':k>.001?'ドラッグ中 · HTMLが曲がっています':'01 / 02 · HTML文書');
+ $('#previous').disabled=animating||k<.995;
+ $('#following').disabled=animating||k>.005;
+};
+const animate=end=>{
+ if(animating)return;
+ animating=true;const start=progress,t0=performance.now();
+ const duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:330;
+ const tick=now=>{
+  const u=duration?Math.min(1,(now-t0)/duration):1;
+  paint(start+(end-start)*(u*u*(3-2*u)));
+  if(u<1){frame=requestAnimationFrame(tick);return}
+  target=end;animating=false;paint(end);
+ };
+ frame=requestAnimationFrame(tick);
+};
+const begin=e=>{
+ if(animating||drag||e.button!==0)return;
+ e.preventDefault();
+ drag={x:e.clientX,pointerId:e.pointerId,start:progress};
+ viewport.classList.add('dragging');
+};
+const move=e=>{
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ const direction=drag.start>.5?1:-1;
+ paint(drag.start+direction*(e.clientX-drag.x)/(width*.7));
+};
+const end=e=>{
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ const cancel=e.type==='pointercancel';
+ drag=null;viewport.classList.remove('dragging');
+ animate(cancel?target:(progress>.43?1:0));
+};
+viewport.addEventListener('pointerdown',e=>{
+ const bounds=viewport.getBoundingClientRect();
+ const onEdge=progress>.5?e.clientX<bounds.left+Math.max(36,width*.07):e.clientX>bounds.right-Math.max(36,width*.07);
+ if(onEdge)begin(e);
+},true);
+window.addEventListener('pointermove',move,{passive:true});
+window.addEventListener('pointerup',end);
+window.addEventListener('pointercancel',end);
+grab.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();animate(progress>.5?0:1)}});
+$('#following').onclick=()=>animate(1);
+$('#previous').onclick=()=>animate(0);
+$('#save').onclick=()=>{
+ const url=URL.createObjectURL(new Blob(['<!doctype html>\n'+document.documentElement.outerHTML],{type:'text/html;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download='hexim-page-reveal.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1300);
+};
+const resize=()=>{
+ const previous=progress;paintNative();build();paint(previous);
+};
+window.addEventListener('resize',resize);
+resize();
+})();
+</script></body></html>
