@@ -69,7 +69,12 @@ const paintNative=()=>{
   captureNode.replaceChildren(live.cloneNode(true));
   const w=Math.ceil(viewport.clientWidth),h=Math.ceil(viewport.clientHeight);
   capture.width=w;capture.height=h;
+  ctx.clearRect(0,0,w,h);
   ctx.drawElementImage(captureNode,0,0);
+  // Some experimental builds expose the API but do not paint the subtree.
+  // Never swap a readable HTML page for an empty texture.
+  const pixel=ctx.getImageData(Math.floor(w*.5),Math.floor(h*.5),1,1).data;
+  if(pixel[3]===0){nativeBitmap=null;return}
   const image=document.createElement('canvas');image.width=w;image.height=h;
   image.getContext('2d').drawImage(capture,0,0);nativeBitmap=image;
  }catch(e){nativeBitmap=null}
