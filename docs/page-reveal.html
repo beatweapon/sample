@@ -113,7 +113,7 @@ const render=()=>{
  $('#prev').disabled=goal<=0;$('#next').disabled=goal>=n-1;
  toc.value=String(goal);
  grab.classList.toggle('left-grab',goal===n-1&&current===n-1);
- grab.style.display=current===n-1&&goal===n-1?'block':'block';
+ grab.style.display='block';
 };
 const continueTurns=()=>{
  if(active||current===goal)return;
@@ -138,7 +138,7 @@ const seek=next=>{
  viewport.classList.remove('dragging');render();
 };
 const start=e=>{
- if(active||drag||e.button!==0||current===n-1&&goal===n-1&&false)return;
+ if(active||drag||e.button!==0)return;
  const bounds=viewport.getBoundingClientRect();
  const left=current>0&&e.clientX<bounds.left+Math.max(38,bounds.width*.055);
  const right=current<n-1&&e.clientX>bounds.right-Math.max(38,bounds.width*.055);
