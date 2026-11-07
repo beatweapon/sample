@@ -93,7 +93,7 @@ if(captureSupported){
 }
 const rgba=(hex,a=1)=>{const n=parseInt(hex.slice(1),16);return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255,a]};
 const vertices=[],quad=(a,b,c,d,l=1)=>{for(const [pt,u,v] of [[a,0,0],[b,1,0],[c,1,1],[a,0,0],[c,1,1],[d,0,1]])vertices.push(...pt,u,v,l)};
-const draw=(points,color,texture=null,lightValue=1)=>{const data=[];for(const vertex of points)data.push(...vertex);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(data),gl.DYNAMIC_DRAW);gl.uniform4fv(tint,new Float32Array(color));gl.uniform1f(textured,texture?1:0);gl.bindTexture(gl.TEXTURE_2D,texture||null);gl.drawArrays(gl.TRIANGLES,0,data.length/6)};
+const draw=(points,color,texture=null)=>{if(points.length%6!==0)throw Error('Invalid vertex buffer length: '+points.length);gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(points),gl.DYNAMIC_DRAW);gl.uniform4fv(tint,new Float32Array(color));gl.uniform1f(textured,texture?1:0);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture||null);gl.drawArrays(gl.TRIANGLES,0,points.length/6)};
 const rectangle=(x0,x1,z0,z1,y,color,texture=null,L=1)=>{
  vertices.length=0;quad([x0,y,z0],[x1,y,z0],[x1,y,z1],[x0,y,z1],L);draw(vertices,color,texture);
 };
