@@ -101,31 +101,25 @@ const side=(x0,x1,z0,z1,y0,y1,color)=>{vertices.length=0;quad([x0,y0,z0],[x1,y0,
 const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
  const count=48,width=1.39,front=-.99,rear=.99,data=[];
  const point=(u,z)=>{
-  // All leaves share the exact same spine hinge at x=0.
-  // At PI the turning leaf lands on top of the stationary left page.
-  let x=sideSign*width*u;
-  let Y=y+.018*Math.sin(Math.PI*u)+.018*u;
-  if(angle>0){
-   x=Math.cos(angle)*width*u;
-   Y+=Math.sin(angle)*(width*u*.65+.115*Math.sin(Math.PI*u));
-  }
-  if(back)Y+=.004;
+  // Every page hinges at the same x=0 spine and has identical resting geometry.
+  const x=(angle===0?sideSign:Math.cos(angle))*width*u;
+  const lift=angle===0?0:Math.max(0,Math.sin(angle))*(width*u*.65+.115*Math.sin(Math.PI*u));
+  const Y=y+.018*Math.sin(Math.PI*u)+.018*u+lift;
   return [x,Y,z];
  };
  for(let i=0;i<count;i++){
   const u0=i/count,u1=(i+1)/count;
   const a=point(u0,front),b=point(u1,front),c=point(u1,rear),d=point(u0,rear);
-  const illumination=.85+.15*Math.cos(angle)+.08*Math.sin(u0*5+angle);
-  // UNPACK_FLIP_Y_WEBGL is enabled: the top of a page maps to V=1.
-  // The left and reverse pages also need horizontal orientation reversed.
+  const illumination=.85+.15*Math.abs(Math.cos(angle))+.08*Math.sin(u0*5+angle);
   const texU=u=>(back||sideSign<0)?1-u:u;
+  // Canvas textures use flipped unpack coordinates: V=1 is the page top.
   for(const [p,U,V] of [[a,u0,1],[b,u1,1],[c,u1,0],[a,u0,1],[c,u1,0],[d,u0,0]]){
    data.push(...p,texU(U),V,illumination);
   }
  }
  draw(data,rgba('#fff6e4'),texture);
 };
-let current=0,turn=0,from=0,to=0,animating=false,drag=null,raf=null;
+let current=0,turn=0,turnDirection=0,animating=false,drag=null,raf=null;
 const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height)};
 addEventListener('resize',resize);resize();
 const render=()=>{
@@ -144,25 +138,43 @@ const render=()=>{
  for(let i=0;i<8;i++){let y=-.015+i*.014;rectangle(-1.41,1.41,-.99,.99,y,rgba(i%2?'#d7c7a6':'#f0dfc1'))}
  rectangle(-.035,.035,-1.055,1.055,.104,rgba('#5c3b2a'));
  for(let i=0;i<5;i++){rectangle(-.021,.021,-1,1,.11+i*.003,rgba('#b48c55',.4))}
- // Current spread: back pages remain visible as turning sheet lifts.
- const isTurning=turn>0&&turn<Math.PI-.001;
- sheet(null,-1,.14,tex[current*2]);
- if(isTurning){
-  sheet(null,1,.14,tex[Math.min(chapters.length-1,current*2+3)]);
-  // Back side first, then front; depth test chooses the visible surface.
-  sheet(null,1,.16,tex[Math.min(chapters.length-1,current*2+2)],turn,true);
-  sheet(null,1,.162,tex[Math.min(chapters.length-1,current*2+1)],turn,false);
+ // Animate a single two-sided leaf; switching the visible face at edge-on
+ // avoids drawing two coplanar textures and the flash at the landing frame.
+ if(turnDirection!==0){
+  const base=turnDirection>0?current:current-1;
+  sheet(null,-1,.14,tex[base*2]);
+  sheet(null,1,.14,tex[(base+1)*2+1]);
+  const showingBack=turn>=Math.PI/2;
+  const leafTexture=showingBack?tex[(base+1)*2]:tex[base*2+1];
+  sheet(null,1,.157,leafTexture,turn,showingBack);
  }else{
+  sheet(null,-1,.14,tex[current*2]);
   sheet(null,1,.14,tex[current*2+1]);
  }
  // vignette is CSS layer above
 };
-const show=()=>{progress.textContent=String(current+1).padStart(2,'0')+' / 04';prev.disabled=animating||current===0;next.disabled=animating||current===3};
-const transition=(target,initial=0)=>{
- if(animating||target<0||target>3||target===current)return;
- if(target<current){current=target;turn=0;show();render();return}
- animating=true;from=0;to=Math.PI;const start=performance.now();show();
- const tick=t=>{const u=Math.min(1,(t-start)/1350),smooth=u*u*(3-2*u);turn=Math.max(.0001,to*smooth);render();if(u<1){raf=requestAnimationFrame(tick)}else{turn=0;current=target;animating=false;show();render()}};
+const spreadCount=chapters.length/2;
+const show=()=>{progress.textContent=String(current+1).padStart(2,'0')+' / '+String(spreadCount).padStart(2,'0');prev.disabled=animating||current===0;next.disabled=animating||current===spreadCount-1};
+const transition=target=>{
+ if(animating||target<0||target>=spreadCount||Math.abs(target-current)!==1)return;
+ const direction=Math.sign(target-current);
+ animating=true;
+ turnDirection=direction;
+ // Forward: right-to-left from 0 to PI. Backward: left-to-right from PI to 0.
+ turn=direction>0?0:Math.PI;
+ const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1350;
+ const started=performance.now();
+ show();render();
+ const tick=now=>{
+  const u=duration===0?1:Math.min(1,(now-started)/duration);
+  const smooth=u*u*(3-2*u);
+  turn=direction>0?Math.PI*smooth:Math.PI*(1-smooth);
+  render();
+  if(u<1){raf=requestAnimationFrame(tick);return}
+  // Only swap spreads after the final leaf pose has rendered.
+  current=target;turn=0;turnDirection=0;animating=false;
+  show();render();
+ };
  raf=requestAnimationFrame(tick);
 };
 prev.onclick=()=>transition(current-1);next.onclick=()=>transition(current+1);
