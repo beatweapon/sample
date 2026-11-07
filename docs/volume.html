@@ -99,21 +99,25 @@ const rectangle=(x0,x1,z0,z1,y,color,texture=null,L=1)=>{
 };
 const side=(x0,x1,z0,z1,y0,y1,color)=>{vertices.length=0;quad([x0,y0,z0],[x1,y0,z0],[x1,y1,z1],[x0,y1,z1],.8);draw(vertices,color)};
 // Curvature stays on the exact same mesh at the resting endpoints.
-const pagePoint=(u,z,sideSign,y,angle,back=false)=>{
- const local=angle-.24*Math.sin(angle)*u*u;
+// Page angle describes position; turnDirection describes the leading edge.
+// A backward turn must curl from the left, rather than replay the right curl backward.
+const pagePoint=(u,z,sideSign,y,angle,back=false,turnDirection=1)=>{
+ const bend=Math.sin(angle);
+ const local=angle-turnDirection*.24*bend*u*u;
  const x=(angle>0?Math.cos(local):sideSign)*1.39*u;
- const lift=Math.max(0,Math.sin(local))*(.82*u+.14*Math.sin(Math.PI*u));
- const crossBend=.044*Math.sin(angle)*Math.sin(Math.PI*u)*Math.cos(z*1.4);
+ const leadingEdge=turnDirection<0?.94:.82;
+ const lift=Math.max(0,Math.sin(local))*(leadingEdge*u+.14*Math.sin(Math.PI*u));
+ const crossBend=.044*bend*Math.sin(Math.PI*u)*Math.cos(z*1.4);
  return [x,y+.018*Math.sin(Math.PI*u)+.018*u+lift+crossBend+(back?-.003:0),z];
 };
-const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
+const sheet=(page,sideSign,y,texture,angle=0,back=false,turnDirection=1)=>{
  const count=72,data=[];
  for(let i=0;i<count;i++){
   const u0=i/count,u1=(i+1)/count;
-  const a=pagePoint(u0,-.99,sideSign,y,angle,back);
-  const b=pagePoint(u1,-.99,sideSign,y,angle,back);
-  const c=pagePoint(u1,.99,sideSign,y,angle,back);
-  const d=pagePoint(u0,.99,sideSign,y,angle,back);
+  const a=pagePoint(u0,-.99,sideSign,y,angle,back,turnDirection);
+  const b=pagePoint(u1,-.99,sideSign,y,angle,back,turnDirection);
+  const c=pagePoint(u1,.99,sideSign,y,angle,back,turnDirection);
+  const d=pagePoint(u0,.99,sideSign,y,angle,back,turnDirection);
   const bend=Math.sin(angle)*Math.sin(Math.PI*u0);
   const illumination=1+.08*Math.sin(u0*5)-.20*Math.max(0,bend)+.08*Math.sin(angle)*Math.cos(u0*8);
   const texU=u=>(back||sideSign<0)?1-u:u;
@@ -121,11 +125,11 @@ const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
  }
  draw(data,rgba('#fff6e4'),texture);
 };
-const paperEdge=(sideSign,y,angle)=>{
+const paperEdge=(sideSign,y,angle,turnDirection=1)=>{
  const data=[],n=20;
  for(let i=0;i<n;i++){
   const z0=-.99+1.98*i/n,z1=-.99+1.98*(i+1)/n;
-  const a=pagePoint(1,z0,sideSign,y,angle),b=pagePoint(1,z1,sideSign,y,angle);
+  const a=pagePoint(1,z0,sideSign,y,angle,false,turnDirection),b=pagePoint(1,z1,sideSign,y,angle,false,turnDirection);
   const c=[b[0],b[1]-.012,b[2]],d=[a[0],a[1]-.012,a[2]];
   for(const [p,U,V] of [[a,0,0],[b,1,0],[c,1,1],[a,0,0],[c,1,1],[d,0,1]])data.push(...p,U,V,.87);
  }
@@ -134,6 +138,7 @@ const paperEdge=(sideSign,y,angle)=>{
 // Every physical leaf has an immutable front and back texture.
 const spreadCount=chapters.length/2,leafCount=spreadCount-1;
 const leafAngles=Array(leafCount).fill(0);
+const leafDirections=Array(leafCount).fill(1);
 let current=0,animating=false,drag=null,raf=null;
 const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height);};
 addEventListener('resize',resize);resize();
@@ -161,8 +166,8 @@ const render=()=>{
   const angle=leafAngles[i],progress=angle/Math.PI;
   const y=.147+(leafCount-1-i)*.003*(1-progress)+i*.003*progress;
   const back=angle>=Math.PI/2;
-  sheet(null,1,y,back?tex[2*i+2]:tex[2*i+1],angle,back);
-  paperEdge(1,y,angle);
+  sheet(null,1,y,back?tex[2*i+2]:tex[2*i+1],angle,back,leafDirections[i]);
+  paperEdge(1,y,angle,leafDirections[i]);
  }
  // vignette is CSS layer above
 };
@@ -174,6 +179,8 @@ const show=()=>{
 const transition=target=>{
  if(animating||target<0||target>=spreadCount||Math.abs(target-current)!==1)return;
  const direction=Math.sign(target-current),leafIndex=direction>0?current:target;
+ // Direction is specific to this interaction, not inferred from the angle.
+ leafDirections[leafIndex]=direction;
  const start=leafAngles[leafIndex],end=direction>0?Math.PI:0;
  const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:1350;
  animating=true;show();
