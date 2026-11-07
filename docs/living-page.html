@@ -53,22 +53,31 @@ const chapters=[
 {chapter:'THE AGE OF ASH · CHAPTER I',title:'最初の灯火',a:'旅人たちが荒野の果てに最初の火を灯した。それは小さな光だったが、やがて街道が伸び、鐘が鳴り、新しい町が生まれた。',b:'剣を携えた者、鍛冶場を守った者、遠くの土地へ出かけた者。それぞれの選択がひとつの世界を形づくっていった。'},
 {chapter:'THE AGE OF ASH · CHAPTER II',title:'築かれた王国',a:'霧の向こうに新しい街が見えた。壁を築き、地図を広げ、誰も知らなかった谷に名前を与えた。人々が集まり、やがて王国が生まれた。',b:'王国は剣だけで成立したのではない。明日も火を守ると決めた人々がいたから、街は数百の夜を越えた。'},
 {chapter:'THE AGE OF ASH · EPILOGUE',title:'世界の終わり',a:'夜空の赤い星が落ち、最後の鐘が鳴った。英雄たちの名は古びた紙に刻まれ、街の灯りはゆっくりと消えていった。',b:'それでも歴史は残る。この一枚をめくった者が、かつてこの世界が存在したことを思い出すために。'}];
-let index=0,drag=null,busy=false,progress=0,bitmap=null,raf=0;
+let index=0,drag=null,busy=false,progress=0,bitmap=null,prepared=null,raf=0;
 const context=deform.getContext('2d');
 const native=typeof capture.getContext('2d').drawElementImage==='function';
 indicator.textContent=native?'HTML-in-Canvas 対応':'CSSフォールバック（HTML-in-Canvas非対応）';
 const fill=()=>{
  const c=chapters[index];$('#chapter').textContent=c.chapter;$('#title').textContent=c.title;$('#paragraph1').textContent=c.a;$('#paragraph2').textContent=c.b;$('#folio').textContent='— '+String(index+1).padStart(2,'0')+' —';$('#count').textContent=(index+1)+' / '+chapters.length;$('#prev').disabled=index===0;$('#next').disabled=index===chapters.length-1;$('#under-title').textContent=chapters[Math.min(index+1,chapters.length-1)].title;
+ prepareCapture();
 };
 const capturePage=()=>{
- if(!native)return false;
+ if(!native||!prepared)return false;
+ bitmap=prepared;return true;
+};
+const prepareCapture=()=>{
+ if(!native)return;
+ captureInner.replaceChildren(page.querySelector('.ink').cloneNode(true));
+};
+// HTML-in-Canvas paint callback is the canonical point to capture a drawable subtree.
+if(native)capture.onpaint=()=>{
  try{
-  captureInner.replaceChildren(page.querySelector('.ink').cloneNode(true));
   const ctx=capture.getContext('2d');ctx.clearRect(0,0,760,570);
   ctx.drawElementImage(src,0,0);
-  const snapshot=document.createElement('canvas');snapshot.width=760;snapshot.height=570;snapshot.getContext('2d').drawImage(capture,0,0);
-  bitmap=snapshot;return true;
- }catch(e){console.warn('HTML-in-Canvas capture unavailable',e);return false}
+  const snapshot=document.createElement('canvas');snapshot.width=760;snapshot.height=570;
+  snapshot.getContext('2d').drawImage(capture,0,0);
+  prepared=snapshot;
+ }catch(e){console.warn('HTML-in-Canvas paint failed, falling back to CSS',e);prepared=null}
 };
 const resize=()=>{
  const b=sheet.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);deform.width=Math.round(b.width*dpr);deform.height=Math.round(b.height*dpr);context.setTransform(dpr,0,0,dpr,0,0);
@@ -100,7 +109,7 @@ const begin=e=>{
  if(busy)return;
  if(index>=chapters.length-1)return;
  const rect=sheet.getBoundingClientRect();
- if(native&&!capturePage()){indicator.textContent='HTML描画失敗：CSSフォールバック';}
+ if(native&&!capturePage()){indicator.textContent='HTML描画待機中：CSSフォールバック';}
  resize();drag={x:e.clientX,y:e.clientY,start:progress,active:true};corner.setPointerCapture(e.pointerId);
  if(bitmap){sheet.classList.add('dragging');render(0)}else{sheet.classList.remove('dragging')}
  corner.style.cursor='grabbing';
