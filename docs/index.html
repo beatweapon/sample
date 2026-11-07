@@ -120,7 +120,7 @@ const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
  draw(data,rgba('#fff6e4'),texture);
 };
 let current=0,segment=0,turn=0,animating=false,drag=null,raf=null;
-const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height);if(typeof render==='function')render()};
+const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);world.width=Math.round(world.clientWidth*dpr);world.height=Math.round(world.clientHeight*dpr);gl.viewport(0,0,world.width,world.height);gl.uniform2f(resolution,world.width,world.height);};
 addEventListener('resize',resize);resize();
 const render=()=>{
  gl.clearColor(.045,.065,.079,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
@@ -148,6 +148,7 @@ const render=()=>{
  sheet(null,1,.141,leafTexture,turn,showingBack);
  // vignette is CSS layer above
 };
+addEventListener('resize',render);
 const spreadCount=chapters.length/2;
 const show=()=>{progress.textContent=String(current+1).padStart(2,'0')+' / '+String(spreadCount).padStart(2,'0');prev.disabled=animating||current===0;next.disabled=animating||current===spreadCount-1};
 const transition=target=>{
