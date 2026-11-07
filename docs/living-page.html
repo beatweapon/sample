@@ -28,7 +28,9 @@ h1{font-size:clamp(21px,3vw,31px);font-weight:normal;letter-spacing:.12em;margin
 .ink p{font-size:clamp(12px,1.5vw,15px);line-height:2.2;letter-spacing:.04em;margin:8px 0}
 .ink a{color:#765333;text-decoration-thickness:1px;text-underline-offset:4px}.ink a:hover{color:#9b481d}
 .folio{margin-top:auto;text-align:center;border-top:1px solid #b49b73;padding-top:10px;font-size:11px;letter-spacing:.17em;color:#92744d}
-.corner{position:absolute;right:0;bottom:0;width:96px;height:96px;z-index:5;cursor:grab;touch-action:none;user-select:none}
+.corner{position:absolute;right:0;bottom:0;width:112px;height:112px;z-index:100;transform:translateZ(100px);cursor:grab;touch-action:none;user-select:none;pointer-events:auto}
+.corner:hover:before,.corner:focus-visible:before{border-bottom-color:#e0b878}
+.sheet-area.dragging .corner{cursor:grabbing}
 .corner:before{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 51px 51px;border-color:transparent transparent #bd9d6c transparent;filter:drop-shadow(-2px -3px 3px #35200b3a)}
 .corner:after{content:"つかむ";position:absolute;right:4px;bottom:11px;font-size:10px;transform:rotate(-42deg);color:#44301f}
 #deform{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;z-index:4}
@@ -105,22 +107,22 @@ const setProgress=(t,vertical=0)=>{
  sheet.classList.toggle('in-motion',progress>.003&&progress<.997);
 };
 const begin=e=>{
- if(busy||index>=chapters.length-1)return;
+ if(busy||index>=chapters.length-1||drag)return;
  e.preventDefault();
  drag={x:e.clientX,y:e.clientY,pointerId:e.pointerId};
- corner.setPointerCapture(e.pointerId);
  sheet.classList.add('dragging');
  corner.style.cursor='grabbing';
+ // Keep events on the window: the 3D paper can cross the original hit target.
 };
 const move=e=>{
- if(!drag)return;
+ if(!drag||e.pointerId!==drag.pointerId)return;
  const rect=sheet.getBoundingClientRect();
  const delta=Math.max(0,drag.x-e.clientX);
  const vertical=(drag.y-e.clientY)/Math.max(1,rect.height)*12;
  setProgress(delta/(Math.max(1,rect.width)*.68),vertical);
 };
 const finish=e=>{
- if(!drag)return;
+ if(!drag||(e&&e.pointerId!==drag.pointerId))return;
  if(e&&e.type==='pointercancel')progress=0;
  drag=null;corner.style.cursor='grab';
  const to=progress>.35?1:0,start=progress;
@@ -136,7 +138,19 @@ const finish=e=>{
  };
  raf=requestAnimationFrame(frame);
 };
-corner.addEventListener('pointerdown',begin);corner.addEventListener('pointermove',move);corner.addEventListener('pointerup',finish);corner.addEventListener('pointercancel',finish);
+// Accept drags started anywhere in the bottom-right grab zone, even when
+// the 3D-transformed page visually sits above the handle in hit testing.
+document.addEventListener('pointerdown',e=>{
+ if(e.button!==0||!sheet.contains(e.target))return;
+ const bounds=sheet.getBoundingClientRect();
+ const nearRight=e.clientX>=bounds.right-Math.min(140,bounds.width*.28);
+ const nearBottom=e.clientY>=bounds.bottom-Math.min(140,bounds.height*.3);
+ if(nearRight&&nearBottom)begin(e);
+},true);
+window.addEventListener('pointermove',move,{passive:true});
+window.addEventListener('pointerup',finish);
+window.addEventListener('pointercancel',finish);
+window.addEventListener('blur',()=>{if(drag)finish({pointerId:drag.pointerId,type:'pointercancel'})});
 corner.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(index+1)}});
 const go=target=>{if(busy||target<0||target>=chapters.length)return;index=target;bitmap=null;setProgress(0);sheet.classList.remove('dragging');fill()};
 $('#prev').addEventListener('click',()=>go(index-1));$('#next').addEventListener('click',()=>go(index+1));
