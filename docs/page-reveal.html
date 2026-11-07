@@ -5,19 +5,19 @@
 :root{--paper:#f0e5cf;--ink:#473523;--gold:#a88d65}*{box-sizing:border-box}
 body{margin:0;color:var(--ink);background:#e8dcc4;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif}
 button,select{font:inherit}button{cursor:pointer}a{color:#86532d;text-underline-offset:3px}
-header{position:relative;z-index:50;min-height:54px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;background:#eee3cd;border-bottom:1px solid #a48b664f;padding:9px clamp(12px,3vw,38px)}
+header{position:absolute;left:0;top:0;right:0;z-index:50;min-height:50px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;background:linear-gradient(180deg,#f3ead9ed,#f3ead900);padding:8px clamp(12px,2vw,32px)}
 .logo{font-size:21px;letter-spacing:.2em;color:#654626}.nav{display:flex;gap:4px;flex-wrap:wrap}.nav a{font:10px system-ui,sans-serif;text-decoration:none;padding:7px 8px;border:1px solid #bcaa8a}.nav a[aria-current]{background:#654626;color:#fff}
 .kicker{font:10px system-ui,sans-serif;letter-spacing:.25em;color:#95754f}
-.intro{text-align:center;padding:18px 14px 12px}.intro h1{font-size:clamp(22px,3vw,34px);font-weight:normal;letter-spacing:.14em;margin:5px 0}.intro p{font-size:11px;color:#826e59;margin:0}
-#viewport{position:relative;max-width:1360px;margin:0 auto;width:100%;height:clamp(460px,68vh,690px);perspective:1700px;transform-style:preserve-3d;isolation:isolate;background:linear-gradient(90deg,#e7d5b3 0%,#f0e6d2 48%,#d4b88b 50%,#f0e6d2 52%,#e7d5b3 100%);overflow:visible}
+.intro{display:none}
+#viewport{position:relative;margin:0;width:100%;height:100vh;height:100dvh;min-height:450px;perspective:1700px;transform-style:preserve-3d;isolation:isolate;background:linear-gradient(90deg,#e7d5b3 0%,#f0e6d2 48%,#d4b88b 50%,#f0e6d2 52%,#e7d5b3 100%);overflow:hidden}
 #viewport:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;box-shadow:inset 0 0 75px #70522a23}
 #left-base{position:absolute;left:0;top:0;width:50%;height:100%;z-index:1;overflow:hidden}
 #right-base{position:absolute;left:50%;top:0;width:50%;height:100%;z-index:1;overflow:hidden}
-.page{width:100%;height:100%;position:relative;background:linear-gradient(90deg,#e3cda9 0,#f1e6d0 5%,#f3e9d6 89%,#e0cda8 100%);border:1px solid #bfa782;overflow:hidden}
+.page{width:100%;height:100%;position:relative;background:linear-gradient(90deg,#e3cda9 0,#f1e6d0 5%,#f3e9d6 89%,#e0cda8 100%);overflow:hidden}
 .page.left{background:linear-gradient(90deg,#dcc49e,#f3e9d6 11%,#f2e6cf 91%,#c3aa81)}
 .page.right{background:linear-gradient(90deg,#cdb18a,#f2e5cf 9%,#f2e7d2 92%,#dfc9a7)}
 .page:before{content:"";position:absolute;inset:13px;border:1px solid #bba47d88;pointer-events:none}
-.page-inner{padding:clamp(24px,4.1vw,57px) clamp(21px,5.5vw,70px) clamp(21px,3.2vw,45px);height:100%;display:flex;flex-direction:column}
+.page-inner{padding:clamp(78px,11vh,135px) clamp(22px,5.5vw,110px) clamp(90px,12vh,145px);height:100%;display:flex;flex-direction:column}
 .page-heading{font:10px system-ui,sans-serif;letter-spacing:.19em;color:#8b6e49;border-bottom:1px solid #bfa985;padding-bottom:13px}
 .page h2{font-weight:normal;font-size:clamp(19px,2.7vw,33px);letter-spacing:.11em;margin:22px 0 16px}
 .page p{font-size:clamp(12px,1.28vw,15px);line-height:2.08;letter-spacing:.025em;margin:0 0 16px}
@@ -42,22 +42,21 @@ header{position:relative;z-index:50;min-height:54px;display:flex;align-items:cen
 #grab.left-grab{left:0;right:auto;background:linear-gradient(90deg,#9a76452c,transparent)}
 #grab.left-grab:after{right:auto;left:11px}
 #viewport.dragging,#viewport.dragging *{user-select:none}
-.tools{display:flex;justify-content:center;align-items:center;gap:11px;flex-wrap:wrap;padding:17px 12px 12px;border-top:1px solid #ad926a5c}
+.tools{position:fixed;left:50%;bottom:15px;z-index:60;transform:translateX(-50%);display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;padding:8px 12px;border:1px solid #b2987259;border-radius:7px;background:#f3e8d5d9;backdrop-filter:blur(12px);box-shadow:0 8px 24px #6b4e2730;max-width:calc(100vw - 20px)}
 .tools button,.tools select{border:1px solid #b39b78;padding:9px 13px;background:#f2e7d1;color:#624a33;font-size:12px}.tools button:disabled{opacity:.32;cursor:not-allowed}.tools output{font:12px system-ui,sans-serif;min-width:110px;text-align:center;color:#765c3d}
-.about{max-width:930px;margin:0 auto;padding:12px 20px 40px;color:#7e6b52;font:12px/1.8 system-ui,sans-serif}
+.about{max-width:930px;margin:0 auto;padding:24px 20px 40px;color:#7e6b52;font:12px/1.8 system-ui,sans-serif}
 @media(max-width:750px){
-#viewport{height:clamp(450px,67vh,570px)}
-.page-inner{padding:24px 21px 19px}.page-heading{font-size:8px}.page h2{font-size:17px;margin:16px 0 10px}.page p{font-size:11px;line-height:1.72;margin-bottom:9px}.page .mini{font-size:10px}.mini-map{height:95px}.page-footer{font-size:8px}.ornament{font-size:23px}
+#viewport{height:100vh;height:100dvh;min-height:450px}
+.page-inner{padding:85px 21px 90px}.page-heading{font-size:8px}.page h2{font-size:17px;margin:16px 0 10px}.page p{font-size:11px;line-height:1.72;margin-bottom:9px}.page .mini{font-size:10px}.mini-map{height:95px}.page-footer{font-size:8px}.ornament{font-size:23px}
 }
-@media(max-width:450px){#viewport{height:520px}.page-inner{padding:21px 14px 18px}.page h2{font-size:15px}.page p{font-size:10px;line-height:1.55}.page-heading{letter-spacing:.04em;font-size:7px}.mini-map{height:70px}.page-footer{letter-spacing:0}}
+@media(max-width:450px){#viewport{height:100vh;height:100dvh;min-height:520px}.page-inner{padding:85px 14px 86px}.page h2{font-size:15px}.page p{font-size:10px;line-height:1.55}.page-heading{letter-spacing:.04em;font-size:7px}.mini-map{height:70px}.page-footer{letter-spacing:0}}
 </style></head><body>
 <header><span class="logo">HEXIM</span><nav class="nav"><a href="./classic.html">初期版</a><a href="./index.html">WebGL安定版</a><a href="./volume.html">質感実験</a><a href="./living-page.html">つかめる年代記</a><a href="./page-reveal.html" aria-current="page">ページの正体</a></nav></header>
-<div class="intro"><div class="kicker">THE SEVENTH WORLD / THE AGE OF ASH</div><h1>第七世界の年代記</h1><p>文章を選択できる普通のWebページです。右端を左へドラッグすると、右ページだけがめくれます。</p></div>
 <main id="viewport" aria-label="第七世界の年代記。右ページを左へドラッグしてめくれます">
 <div id="left-base"></div><div id="right-base"></div><div id="shadow"></div><div id="leaves"></div><div id="spine"></div><div id="grab" role="button" tabindex="0" aria-label="右端をドラッグしてページをめくる"></div>
 </main>
 <div class="tools"><button id="prev">← 前の見開き</button><output id="status">01 / 12</output><button id="next">次の見開き →</button><label style="font:11px system-ui,sans-serif">目次 <select id="toc" aria-label="見開きを選択"></select></label><button id="save">単一HTMLを保存</button></div>
-<p class="about" id="about">この見開きは、文章・リンク・地図を持つ通常のHTML文書です。中央を軸に右ページだけが左へめくれ、その紙の裏面が次の見開きの左ページになります。めくった紙は消えず左側に残ります。</p>
+<p class="about" id="about">この画面そのものが見開きの年代記です。文章・リンク・地図は通常のHTMLで、右端をドラッグすると中央を軸に右半分だけがめくれます。紙は左側に残り、戻すこともできます。</p>
 <script>
 (()=>{
 'use strict';
