@@ -99,19 +99,28 @@ const rectangle=(x0,x1,z0,z1,y,color,texture=null,L=1)=>{
 };
 const side=(x0,x1,z0,z1,y0,y1,color)=>{vertices.length=0;quad([x0,y0,z0],[x1,y0,z0],[x1,y1,z1],[x0,y1,z1],.8);draw(vertices,color)};
 const sheet=(page,sideSign,y,texture,angle=0,back=false)=>{
- const count=44,width=1.39,front=-.99,rear=.99,data=[];
+ const count=48,width=1.39,front=-.99,rear=.99,data=[];
+ const point=(u,z)=>{
+  // All leaves share the exact same spine hinge at x=0.
+  // At PI the turning leaf lands on top of the stationary left page.
+  let x=sideSign*width*u;
+  let Y=y+.018*Math.sin(Math.PI*u)+.018*u;
+  if(angle>0){
+   x=Math.cos(angle)*width*u;
+   Y+=Math.sin(angle)*(width*u*.65+.115*Math.sin(Math.PI*u));
+  }
+  if(back)Y+=.004;
+  return [x,Y,z];
+ };
  for(let i=0;i<count;i++){
   const u0=i/count,u1=(i+1)/count;
-  const point=(u,z)=>{
-   let x=sideSign*(.045+u*width),Y=y+.026*Math.sin(Math.PI*u)+.025*u;
-   if(angle){const radius=.19*Math.sin(angle);x=.045+Math.cos(angle)*width*u;Y+=Math.sin(angle)*width*u*.82+radius*Math.sin(Math.PI*u*2)+(back?.012:0)}
-   return [x,Y,z];
-  };
   const a=point(u0,front),b=point(u1,front),c=point(u1,rear),d=point(u0,rear);
-  // Two-sided mesh: reverse texture U for flipped back face.
-  const lightValue=.85+.15*Math.cos(angle)+.08*Math.sin(u0*5+angle);
-  for(const [p,U,V] of [[a,u0,0],[b,u1,0],[c,u1,1],[a,u0,0],[c,u1,1],[d,u0,1]]){
-   data.push(...p,back?1-U:U,V,lightValue)
+  const illumination=.85+.15*Math.cos(angle)+.08*Math.sin(u0*5+angle);
+  // UNPACK_FLIP_Y_WEBGL is enabled: the top of a page maps to V=1.
+  // The left and reverse pages also need horizontal orientation reversed.
+  const texU=u=>(back||sideSign<0)?1-u:u;
+  for(const [p,U,V] of [[a,u0,1],[b,u1,1],[c,u1,0],[a,u0,1],[c,u1,0],[d,u0,0]]){
+   data.push(...p,texU(U),V,illumination);
   }
  }
  draw(data,rgba('#fff6e4'),texture);
@@ -133,8 +142,8 @@ const render=()=>{
  rectangle(-1.42,1.42,-1.02,1.02,-.035,rgba('#403026'));
  // Stacked page edges and book binding
  for(let i=0;i<8;i++){let y=-.015+i*.014;rectangle(-1.41,1.41,-.99,.99,y,rgba(i%2?'#d7c7a6':'#f0dfc1'))}
- rectangle(-.065,.065,-1.055,1.055,.104,rgba('#5c3b2a'));
- for(let i=0;i<5;i++){rectangle(-.033,.033,-1,1,.11+i*.003,rgba('#b48c55',.4))}
+ rectangle(-.035,.035,-1.055,1.055,.104,rgba('#5c3b2a'));
+ for(let i=0;i<5;i++){rectangle(-.021,.021,-1,1,.11+i*.003,rgba('#b48c55',.4))}
  // Current spread: back pages remain visible as turning sheet lifts.
  const isTurning=turn>0&&turn<Math.PI-.001;
  sheet(null,-1,.14,tex[current*2]);
