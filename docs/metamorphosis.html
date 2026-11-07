@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEXIM — The Living Chronicle</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Yu Gothic",sans-serif;color:#222c35;background:#f6f5f2}*{box-sizing:border-box}body{margin:0;overflow-x:hidden}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:default}a{color:#416d99}a:hover{text-decoration-thickness:2px}
+.topbar{height:65px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #d9dfe2;padding:0 clamp(18px,4vw,58px);position:relative;z-index:20}.brand{font-size:19px;letter-spacing:.21em;font-weight:750;color:#182d3a}.brand span{font-size:10px;font-weight:400;letter-spacing:.08em;color:#81909c;margin-left:15px}.switch{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.switch a{text-decoration:none;color:#526573;font-size:11px;padding:8px 9px;border-radius:5px;white-space:nowrap}.switch a.active{background:#203849;color:#fff}.switch a:hover:not(.active){background:#edf1f3}
+.hero{max-width:1000px;margin:31px auto 17px;padding:0 20px;display:flex;justify-content:space-between;gap:24px;align-items:end}.eyebrow{color:#8e7c59;font-size:11px;letter-spacing:.24em;font-weight:700}.hero h1{font:600 clamp(23px,3vw,35px) Georgia,"Yu Mincho",serif;letter-spacing:.07em;margin:8px 0 5px;color:#25323c}.hero p{font-size:12px;color:#78848d;margin:0}.hero-tag{color:#84919b;text-align:right;font:11px/1.9 system-ui,sans-serif}.hero-tag strong{color:#354f65}
+.stage{height:min(690px,78vw);min-height:510px;max-height:690px;position:relative;isolation:isolate;perspective:1800px;overflow:hidden;transition:background 800ms;background:#eff1f2;border-top:1px solid #e1e3e3;border-bottom:1px solid #e1e3e3}.stage:before{content:"";position:absolute;inset:0;opacity:0;transition:opacity 1s;background:repeating-linear-gradient(2deg,#74543b0b 0 3px,#26160a0a 4px 5px),radial-gradient(ellipse at 52% 54%,#826047,#382c2a 65%,#1b1c1d 100%);pointer-events:none}.stage.book-mode:before{opacity:1}
+.studio-top{position:absolute;top:20px;left:5%;right:5%;display:flex;justify-content:space-between;align-items:center;z-index:10;transition:color .4s}.stage.book-mode .studio-top{color:#e8d3aa}.context{font:10px system-ui,sans-serif;letter-spacing:.16em;color:#8b969d;transition:color .4s}.stage.book-mode .context{color:#d6bf9a}.mode-pill{border:1px solid #cbd5da;border-radius:30px;padding:7px 12px;background:#ffffffa6;color:#587081;font:10px system-ui,sans-serif;transition:all .5s}.stage.book-mode .mode-pill{background:#231a17a8;border-color:#c4a06a99;color:#e4cdac}
+.book-cover{position:absolute;left:50%;top:50%;width:836px;height:525px;border-radius:9px;border:7px solid #4c3026;background:linear-gradient(115deg,#34211b,#744e37 48%,#342019 51%,#6b462f);transform:translate(-50%,-43%) rotateX(17deg) scale(.86);opacity:0;transition:opacity 900ms;box-shadow:0 35px 55px #090704b5, inset 0 0 0 3px #b88c54;pointer-events:none}.stage.book-mode .book-cover{opacity:1}.book-cover:before{content:"";position:absolute;inset:10px;border:1px solid #caa27677;border-radius:3px}.book-cover:after{content:"";position:absolute;top:0;bottom:0;left:50%;width:22px;transform:translateX(-50%);background:linear-gradient(90deg,#1b1210bb,#cfac8033,#211311a8)}
+.leaf{position:absolute;top:calc(50% - 260px);left:50%;width:405px;height:520px;transform-style:preserve-3d;transition:transform 1150ms cubic-bezier(.16,.73,.19,1),opacity 650ms;box-shadow:0 8px 27px #24353d1c;overflow:hidden;background:#fff;backface-visibility:hidden}.leaf.document{width:720px;height:580px;left:50%;top:calc(50% - 290px);transform:translateX(-50%);z-index:4;border:1px solid #d8dedf;border-radius:4px;overflow:auto;scrollbar-width:thin}.stage.book-mode .leaf.document{transform:translateX(-100%) translateY(0) rotateX(17deg) scale(.86);width:420px;height:520px;top:calc(50% - 260px);left:50%;overflow:hidden;border:0;border-radius:1px;box-shadow:inset 0 0 34px #85634230,0 13px 16px #0003;background:#eadcbb}
+.leaf.right{left:50%;width:420px;opacity:0;z-index:3;transform:translateX(0) rotateX(17deg) scale(.86);transform-origin:left center;background:#eadcbb;pointer-events:none}.stage.book-mode .leaf.right{opacity:1;pointer-events:auto}.stage.book-mode .leaf.document:after,.stage.book-mode .leaf.right:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 24px 0 26px -24px #39220d44,inset -11px 0 17px -11px #39220d3d}.page-inner{padding:38px 48px 45px;min-height:100%;color:#34424b;background:#fff}.document .page-inner{font-family:system-ui,"Yu Gothic",sans-serif}.page-inner h2{font:600 32px/1.4 Georgia,"Yu Mincho",serif;letter-spacing:.04em;color:#293744;margin:12px 0 14px}.page-inner p{font-size:13px;line-height:2.05;letter-spacing:.025em}.page-inner .meta{font-size:10px;letter-spacing:.14em;font-weight:700;color:#768c9a}.page-inner .rule{height:1px;background:#d8dddc;margin:19px 0}.page-inner .stats{display:flex;gap:9px;margin:15px 0}.page-inner .stat{padding:11px 15px;border:1px solid #dbe2e3;border-radius:4px;flex:1;background:#f8faf9}.stat b{display:block;font-size:17px;color:#354f62}.stat small{font-size:10px;color:#7e8e9a}.page-inner .links{margin-top:21px;font-size:11px}.page-inner .links a{margin-right:18px}.chapter-heading{font-size:10px!important;font-weight:700;letter-spacing:.2em;color:#a08355!important}.stage.book-mode .page-inner{font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;background:repeating-linear-gradient(3deg,#a5875320 0 1px,transparent 2px 8px),#f0e1c4;color:#4e3c2e;padding:30px 34px}.stage.book-mode .page-inner h2{font-size:25px;color:#4d392b}.stage.book-mode .page-inner p{font-size:12px;line-height:2}.stage.book-mode .page-inner .stats{gap:3px}.stage.book-mode .page-inner .stat{padding:8px 6px;border-color:#bbab8b;background:#e6d6b7}.stage.book-mode .page-inner .rule{background:#b9a17b}.stage.book-mode .page-inner .meta{color:#8d6f47}.stage.book-mode a{color:#80532e}
+.right .page-inner{font-family:Georgia,"Yu Mincho",serif;background:repeating-linear-gradient(2deg,#8869400a 0 2px,transparent 3px 10px),#f0e0c0;padding:30px;color:#4f3d2a}.right h2{font:600 27px Georgia,"Yu Mincho",serif;margin:12px 0 20px;text-align:center}.right p{font-size:12px;line-height:2.1}.right .over{font-size:10px;text-align:center;letter-spacing:.17em;color:#886a46;border-bottom:1px solid #b9a382;padding-bottom:15px}.right .map{margin:25px auto 16px;width:100%;height:165px;background:radial-gradient(ellipse,#dfcba3,#e8d9b8);border:1px solid #aa956e;position:relative;overflow:hidden}.right .map svg{width:100%;height:100%}.right .map .castle{opacity:0;transform:translateY(15px);transition:opacity 800ms,transform 800ms}.stage.book-mode .map .castle{opacity:1;transform:none}.right .foot{border-top:1px solid #ad9877;text-align:center;padding-top:13px;margin-top:20px;font:11px Georgia,serif}
+.paper-turn{position:absolute;left:50%;top:calc(50% - 260px);width:420px;height:520px;z-index:8;transform-origin:0 50%;transform-style:preserve-3d;pointer-events:none;visibility:hidden;transition:none}.paper-turn.is-turning{visibility:visible}.turn-face{position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;background:#efdec0;box-shadow:inset 8px 0 20px #4e321d40,0 5px 26px #1c100b44}.turn-face.back{transform:rotateY(180deg);background:#ead6b1}.turn-face .page-inner{padding:25px 30px}.turn-face h2{font-size:24px}.turn-face canvas{width:100%;height:100%;display:block}
+.controls{margin:20px auto;max-width:1000px;padding:0 20px;display:flex;justify-content:center;align-items:center;gap:11px;flex-wrap:wrap}.primary{background:#243f52;color:white;border:1px solid #243f52;padding:12px 21px;border-radius:5px;font-size:12px;letter-spacing:.05em;box-shadow:0 3px 6px #0001}.primary:hover{background:#375c73}.secondary{background:#fff;color:#465c69;border:1px solid #c9d3d8;padding:11px 16px;border-radius:5px;font-size:12px}.secondary:hover{background:#edf1f3}.status{font-size:11px;color:#788894;min-width:118px;text-align:center}.bottom{max-width:1000px;margin:0 auto 50px;padding:12px 20px;display:flex;gap:30px;justify-content:space-between;align-items:center;border-top:1px solid #dce2e3;font-size:12px;color:#798790}.bottom b{color:#324959}.bottom button{font-size:11px;background:none;border:0;text-decoration:underline;color:#517691}
+#capture-stage{position:fixed;left:-9999px;top:0;width:420px;height:520px;opacity:0;pointer-events:none}#capture-stage .capture{width:420px;height:520px}.capture .page-inner{width:420px;height:520px;overflow:hidden}
+@media(max-width:900px){.switch{gap:1px}.switch a{font-size:9px;padding:7px 5px}.hero{margin-top:20px}.hero-tag{display:none}.stage{min-height:480px}.stage.book-mode .leaf.document{transform:translateX(-100%) rotateX(17deg) scale(.67)}.stage.book-mode .leaf.right{transform:rotateX(17deg) scale(.67)}.stage.book-mode .book-cover{transform:translate(-50%,-43%) rotateX(17deg) scale(.67)}.stage.book-mode .paper-turn{transform-origin:0 50%}}
+@media(max-width:600px){.topbar{height:auto;min-height:65px;flex-wrap:wrap;padding:12px}.switch{width:100%;margin-top:9px}.hero h1{font-size:23px}.stage{min-height:510px;height:550px}.leaf.document{width:min(95vw,720px)}.page-inner{padding:26px}.page-inner h2{font-size:25px}.stage.book-mode .leaf.document{transform:translateX(-100%) rotateX(17deg) scale(.42)}.stage.book-mode .leaf.right{transform:rotateX(17deg) scale(.42)}.stage.book-mode .book-cover{transform:translate(-50%,-43%) rotateX(17deg) scale(.42)}.context{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.leaf,.book-cover,.stage:before,.mode-pill{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="brand">HEXIM <span>CHRONICLE LAB</span></div><nav class="switch" aria-label="サンプル切替"><a href="./classic.html">初期版</a><a href="./index.html">WebGL安定版</a><a href="./volume.html">質感実験版</a><a href="./metamorphosis.html" class="active" aria-current="page">文書から本へ</a></nav></div>
+<section class="hero"><div><div class="eyebrow">THE CHRONICLES OF HEXIM · NO. 07</div><h1>ある世界の、最後の記録。</h1><p>まずは普通のWebページとして、文章を選択したり、リンクを開いたりしてください。</p></div><div class="hero-tag"><strong>HTML DOCUMENT</strong><div>TEXT SELECTABLE · LINKS ACTIVE</div></div></section>
+<section class="stage" id="stage"><div class="studio-top"><span class="context" id="context">LIVE HTML DOCUMENT / DOCUMENT MODE</span><span class="mode-pill" id="pill">これは普通のHTML文書です</span></div><div class="book-cover"></div>
+<article class="leaf document" id="document" aria-label="歴史書の本文"><div class="page-inner" id="documentContent"><div class="meta">歴史資料 / 第七世界 / 灰の時代</div><h2>第七世界の年代記</h2><p>英雄たちの冒険が終わり、灰の時代が過ぎ去った。これは、最後の焚火のそばで書き残された世界の記録である。</p><div class="stats"><div class="stat"><b>124年</b><small>世界の寿命</small></div><div class="stat"><b>7人</b><small>記録された英雄</small></div><div class="stat"><b>13都市</b><small>発展した街</small></div></div><div class="rule"></div><p class="chapter-heading">CHAPTER 01 / THE FOUNDING</p><h2>最初の灯火</h2><p>名もなき旅人が、荒野の果てに火を灯した。やがて街道が伸び、鍛冶の音が響き、谷を越えた先に新しい町が生まれた。小さな選択の積み重ねが、世界のかたちを変えていった。</p><p>そのすべては、地図よりも先に人々の記憶に刻まれた。</p><div class="links"><a href="#chapter-map" id="mapLink">街の歴史を見る ↗</a><a href="#archive" id="archiveLink">資料について ↗</a></div></div></article>
+<div class="leaf right" id="right"><div class="page-inner"><div class="over">CHAPTER II · THE KINGDOM</div><h2>築かれた王国</h2><div class="map" id="chapter-map"><svg viewBox="0 0 350 175" role="img" aria-label="街道と城の描かれた古地図"><g fill="none" stroke="#9b815b" opacity=".65"><path d="M0 75 Q80 20 148 88 T350 77" stroke-width="13" opacity=".18"/><path d="M-10 120 Q100 143 175 50 T360 100" stroke-dasharray="4 7" stroke-width="2"/><path d="M0 30 Q85 67 145 20 T350 30"/><path d="M20 145 Q100 90 180 135 T340 142"/></g><g fill="#aa9873" stroke="#806f52" stroke-width="1"><path d="M28 37 l25 -20 24 20 -11 24 -28 2z"/><path d="M258 112 l34 -27 27 27 -12 38 -36 0z"/></g><g class="castle" fill="#71533a" stroke="#71533a" stroke-width="3"><path d="M138 105v-35h13v-13h12v13h11v-24h13v24h13v-13h12v13h11v35z"/><path d="M163 105V86q16 -15 30 0v19" fill="#dcc5a2"/></g><text x="164" y="128" font-size="11" fill="#7c6345" font-family="serif">THE KINGDOM</text></svg></div><p>世界がひとつの王国になったのは、英雄の剣だけによるものではない。人が道をつくり、街に名前を与え、未来を信じたからだ。</p><div class="foot">— 02 —</div></div></div>
+<div class="paper-turn" id="turnPage" aria-hidden="true"><div class="turn-face front" id="turnFront"></div><div class="turn-face back" id="turnBack"></div></div>
+</section>
+<div class="controls"><button class="primary" id="transform" type="button">このWebページを本にする <span aria-hidden="true">↗</span></button><button class="secondary" id="turn" type="button" disabled>ページをめくる</button><button class="secondary" id="restore" type="button" disabled>Webページに戻す</button><span class="status" id="status" aria-live="polite">通常のHTML表示</span></div>
+<div class="bottom" id="archive"><div><b>同じ文章、同じHTML。</b><div>普通の文書から3Dの紙へ。外部ライブラリ不要・単一HTMLで保存できます。</div></div><button type="button" id="download">このサンプルをHTMLで保存</button></div>
+<canvas id="capture-stage" width="420" height="520" layoutsubtree content="drawable"><div class="capture" drawable id="capture-html"></div></canvas>
+<script>
+(()=>{
+'use strict';
+const stage=document.querySelector('#stage'),documentPage=document.querySelector('#document'),right=document.querySelector('#right'),turnPage=document.querySelector('#turnPage'),front=document.querySelector('#turnFront'),back=document.querySelector('#turnBack'),status=document.querySelector('#status'),pill=document.querySelector('#pill'),context=document.querySelector('#context');
+const transform=document.querySelector('#transform'),restore=document.querySelector('#restore'),turn=document.querySelector('#turn'),capture=document.querySelector('#capture-stage'),captureHTML=document.querySelector('#capture-html');
+let book=false,busy=false,turnCount=0,native=false;
+const originalDownload='<!doctype html>\n'+document.documentElement.outerHTML;
+const prefersReduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+try{native=typeof capture.getContext('2d').drawElementImage==='function'}catch(e){}
+const update=()=>{transform.disabled=book||busy;restore.disabled=!book||busy;turn.disabled=!book||busy;status.textContent=busy?'ページが動いています':book?'3Dに変形したHTML文書':'通常のHTML表示';pill.textContent=book?'この本はHTMLのままです':'これは普通のHTML文書です';context.textContent=book?'LIVE HTML / PHYSICAL DOCUMENT':'LIVE HTML DOCUMENT / DOCUMENT MODE'};
+const transformToBook=()=>{if(book||busy)return;book=true;stage.classList.add('book-mode');documentPage.scrollTop=0;update()};
+const restoreDocument=()=>{if(!book||busy)return;book=false;stage.classList.remove('book-mode');turnCount=0;right.style.opacity='';update()};
+const captureHTMLPage=()=>{
+ if(!native)return null;
+ try{
+  captureHTML.replaceChildren(right.querySelector('.page-inner').cloneNode(true));
+  const ctx=capture.getContext('2d');ctx.clearRect(0,0,420,520);ctx.drawElementImage(captureHTML,0,0);
+  const image=document.createElement('canvas');image.width=420;image.height=520;image.getContext('2d').drawImage(capture,0,0);
+  return image;
+ }catch(e){console.warn('HTML-in-Canvas capture unavailable, using live HTML fold',e);return null}
+};
+const turnOnce=async()=>{
+ if(!book||busy)return;
+ busy=true;update();
+ // The content originates in the same authored HTML, not a video or an external texture.
+ const original=right.querySelector('.page-inner');
+ const texture=captureHTMLPage();
+ front.replaceChildren(texture||original.cloneNode(true));
+ const mirror=original.cloneNode(true);mirror.querySelector('h2').textContent='記録は受け継がれる';
+ back.replaceChildren(mirror);
+ // Install the destination content beneath the moving leaf before the motion begins.
+ const destination=original.cloneNode(true);destination.querySelector('h2').textContent=turnCount%2?'築かれた王国':'そして、世界の終わりへ';
+ right.replaceChild(destination,original);
+ // The page is a DOM surface that folds in 3D, preserving a true backside.
+ turnPage.classList.add('is-turning');right.style.visibility='hidden';
+ const scale=window.innerWidth<=600?.42:window.innerWidth<=900?.67:.86;
+ turnPage.style.transform='rotateX(17deg) scale('+scale+') rotateY(0deg)';
+ turnPage.getBoundingClientRect();
+ const duration=prefersReduced?0:560;
+ const animation=turnPage.animate([
+  {transform:'rotateX(17deg) scale('+scale+') rotateY(0deg)',offset:0},
+  {transform:'rotateX(17deg) scale('+scale+') rotateY(-84deg) rotateZ(-2deg)',offset:.48},
+  {transform:'rotateX(17deg) scale('+scale+') rotateY(-180deg)',offset:1}
+ ],{duration,easing:'cubic-bezier(.32,.06,.21,1)',fill:'forwards'});
+ try{await animation.finished}catch(e){}
+ animation.cancel();turnPage.classList.remove('is-turning');right.style.visibility='';
+ turnCount++;
+ busy=false;update();
+};
+transform.addEventListener('click',transformToBook);restore.addEventListener('click',restoreDocument);turn.addEventListener('click',turnOnce);
+document.querySelector('#mapLink').addEventListener('click',e=>{if(!book){e.preventDefault();documentPage.scrollTop=documentPage.scrollHeight}else{e.preventDefault();right.querySelector('.map').scrollIntoView({behavior:'smooth',block:'nearest'})}});
+document.querySelector('#archiveLink').addEventListener('click',e=>{e.preventDefault();document.querySelector('#archive').scrollIntoView({behavior:'smooth'})});
+document.addEventListener('keydown',e=>{if(book&&e.key==='ArrowRight')turnOnce();if(book&&e.key==='Escape')restoreDocument()});
+document.querySelector('#download').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([originalDownload],{type:'text/html;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='hexim-living-chronicle.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+update();
+})();
+</script>
+</body></html>
