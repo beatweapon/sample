@@ -1,186 +1,193 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HEXIM — ページの正体</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEXIM — 第七世界の年代記</title>
 <style>
-:root{--paper:#eee4cf;--ink:#392e25;--accent:#80603b}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif}
-button{font:inherit;cursor:pointer}a{color:#805332;text-underline-offset:4px}
-header{position:relative;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:10px clamp(14px,3vw,48px);border-bottom:1px solid #ab92684d;background:#eee4cf}
-.brand{letter-spacing:.25em;font-size:22px;color:#5b3e22}nav{display:flex;gap:6px;flex-wrap:wrap}nav a{font:11px system-ui,sans-serif;text-decoration:none;border:1px solid #bfa882;padding:7px 9px;border-radius:3px}nav a[aria-current]{background:#765637;color:#fff}
-.lab{padding:7px clamp(20px,4vw,64px);font:11px system-ui,sans-serif;color:#896f50;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #ac956636}
-.viewport{position:relative;min-height:min(760px,82vh);height:clamp(590px,77vh,790px);perspective:1800px;overflow:hidden;background:var(--paper)}
-.document{width:100%;height:100%;background:linear-gradient(95deg,#ddcaa99c 0,#f3ead8 4%,#f3ead8 96%,#e0ca9f 100%);position:relative;overflow:hidden}
-.document:before{content:"";position:absolute;top:20px;bottom:20px;left:20px;right:20px;border:1px solid #c8b28b;pointer-events:none}
-.document .content{width:100%;height:100%;position:relative;display:flex;flex-direction:column;padding:clamp(25px,5.5vw,67px) clamp(24px,8vw,116px)}
-.kicker{font-size:11px;letter-spacing:.25em;color:#8f7350;border-bottom:1px solid #bba47c;padding-bottom:17px}
-.document h1{font-weight:normal;letter-spacing:.12em;font-size:clamp(28px,5vw,57px);margin:32px 0 12px;color:#513a26}
-.stamp{font:12px system-ui,sans-serif;color:#9b7d55;letter-spacing:.09em}
-.columns{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(22px,6vw,78px);margin-top:clamp(22px,4vh,43px);flex:1}
-.columns p{line-height:2.16;letter-spacing:.025em;font-size:clamp(13px,1.36vw,16px);margin:0 0 17px}
-.initial:first-letter{font-size:2.7em;float:left;line-height:1;margin:7px 12px 0 0;color:#915e38}
-.map{position:relative;height:190px;border:1px solid #c0a67c;background:#e3d2ae;overflow:hidden;margin-bottom:18px}.map svg{height:100%;width:100%}
-.aside-heading{font-size:11px;letter-spacing:.2em;color:#896742;border-bottom:1px solid #b89e78;padding:0 0 10px;margin-bottom:14px}.mini{font-size:12px!important;color:#78634c}
-.folio{display:flex;justify-content:space-between;border-top:1px solid #bea682;padding-top:12px;font:11px Georgia,serif;color:#937650;letter-spacing:.13em}
-.below{background:linear-gradient(110deg,#ebddbf,#f5ebd8);position:absolute;inset:0;z-index:0}
-.below .content{padding-left:clamp(24px,8vw,116px)}
-#live{z-index:2}
-#curved{position:absolute;inset:0;z-index:7;pointer-events:none;display:none;transform-style:preserve-3d}
-#curved.on{display:block}
-.strip{position:absolute;top:0;height:100%;overflow:hidden;transform-style:preserve-3d;will-change:transform;backface-visibility:visible}
-.strip .face{position:absolute;top:0;left:0;height:100%;backface-visibility:hidden;overflow:hidden}
-.strip .reverse{position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg) translateZ(1px);background:linear-gradient(95deg,#d0b78a,#f1e4c9 25%,#e8d5af 80%,#ae8c5a);border-top:1px solid #bea477;border-bottom:1px solid #bea477}
-.strip .reverse:before{content:"";position:absolute;inset:12px 0;border-top:1px solid #bca27b;border-bottom:1px solid #bca27b}
-#contact{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#23150b66,transparent 40%);opacity:0}
-.grab{position:absolute;z-index:14;top:0;bottom:0;right:0;width:min(7vw,72px);cursor:grab;touch-action:none;background:linear-gradient(90deg,transparent,#a68a5930);opacity:0;transition:opacity .2s}
-.viewport:hover .grab,.grab:focus-visible{opacity:1}
-.viewport.turned .grab{right:auto;left:0;cursor:grab;background:linear-gradient(90deg,#a68a5940,transparent)}
-.viewport.dragging .grab{cursor:grabbing}
-.grab:after{content:"";position:absolute;right:8px;top:50%;width:2px;height:62px;background:#9474514a;transform:translateY(-50%)}
-.viewport.turned .grab:after{right:auto;left:8px}
-.toolbar{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;background:#eee4cf;border-top:1px solid #c8b28a;padding:15px}
-.toolbar button{border:1px solid #aa8d64;color:#5d442c;background:transparent;padding:10px 15px}.toolbar button:hover:not(:disabled){background:#e0d1b3}.toolbar button:disabled{opacity:.35;cursor:not-allowed}
-.toolbar output{font:12px system-ui,sans-serif;min-width:135px;text-align:center;color:#7d6851}
-.note{max-width:960px;margin:0 auto;padding:24px 20px 44px;font:13px/1.9 system-ui,sans-serif;color:#796b5c}.note strong{color:#54412b}
-#capture{position:fixed;left:-150vw;top:0;width:1200px;height:760px;pointer-events:none}#capture .capture-node{width:1200px;height:760px}
-@media(max-width:720px){.viewport{height:680px}.columns{grid-template-columns:1fr;gap:6px;margin-top:18px}.map{height:105px;margin-bottom:8px}.columns p{font-size:12px;line-height:1.7;margin-bottom:9px}.document h1{font-size:28px;margin:16px 0 6px}.document .content{padding:30px 32px}.kicker{font-size:9px}.stamp,.mini{font-size:10px!important}.aside-heading{margin:2px 0 5px}.folio{font-size:9px}}
-</style></head>
-<body>
-<header><div class="brand">HEXIM</div><nav aria-label="実験版"><a href="./index.html">WebGL</a><a href="./volume.html">質感実験</a><a href="./metamorphosis.html">変形実験</a><a href="./living-page.html">つかめる年代記</a><a href="./page-reveal.html" aria-current="page">ページの正体</a></nav></header>
-<div class="lab"><span>THE SEVENTH WORLD · THE AGE OF ASH</span><span>ARCHIVE / AN INTERACTIVE DOCUMENT</span></div>
-<main class="viewport" id="viewport" aria-label="年代記のWebページ。右端を左へドラッグすると紙が持ち上がります">
-<section class="document below" id="beneath"><div class="content"><div class="kicker">THE CHRONICLE OF HEXIM · CHAPTER II</div><h1>築かれた王国</h1><div class="stamp">THE YEAR 047 — KINGDOM OF THE EAST</div><div class="columns"><div><p class="initial">霧の向こうに新しい街が見えた。壁を築き、地図を広げ、人々が道に名前を与えた。</p><p>王国は剣だけで成立したのではない。明日も火を守ると決めた人々がいたから、街は数百の夜を越えた。</p><p><a href="#about">歴史を読む</a></p></div><div><div class="aside-heading">THE NEXT CHAPTER</div><p>紙をつかんで開くと、その下にも普通のHTML文書がある。</p></div></div><div class="folio"><span>THE LOST CHRONICLES</span><span>— 02 —</span></div></div></section>
-<section class="document" id="live"><div class="content" id="actual-content"><div class="kicker">THE CHRONICLE OF HEXIM · CHAPTER I</div><h1>最初の灯火</h1><div class="stamp">THE YEAR 001 — THE FIRST EMBERS</div><div class="columns"><div><p class="initial">名もなき旅人たちが荒野の果てに最初の火を灯した。それは小さな光だったが、やがて街道が伸び、鐘が鳴り、新しい町が生まれた。</p><p>剣を携えた者、鍛冶場を守った者、遠くの土地へ出かけた者。それぞれの選択がひとつの世界を形づくっていった。</p><p>その記録は、地図よりも先に人々の記憶に刻まれた。</p><p><a href="#about">年代記の由来について</a></p></div><aside><div class="aside-heading">MAP OF THE FIRST AGE</div><div class="map"><svg viewBox="0 0 400 200" role="img" aria-label="第七世界の古地図"><g fill="none" stroke="#95774f" stroke-width="3" opacity=".8"><path d="M0 60Q100 20 150 100T400 65"/><path d="M0 155Q100 110 190 140T400 115"/><path d="M55 0Q70 80 145 100T230 200" stroke-dasharray="6 8"/></g><g fill="#97724a"><circle cx="150" cy="100" r="9"/><path d="M255 86l20-24 20 24v38h-40z"/></g><g fill="#695234" font-size="15" font-family="serif"><text x="117" y="126">ASH VILLAGE</text><text x="237" y="146">CITADEL</text></g></svg></div><p class="mini">最初に建てられた拠点と、英雄たちの足跡。</p></aside></div><div class="folio"><span>THE LOST CHRONICLES</span><span>— 01 —</span></div></div></section>
-<div id="contact"></div><div id="curved" aria-hidden="true"></div><div id="grab" class="grab" role="button" tabindex="0" aria-label="右端をドラッグしてページをめくる"></div></main>
-<div class="toolbar"><button id="previous" type="button" disabled>← 戻す</button><output id="status">01 / 02 · HTML文書</output><button id="following" type="button">次のページ →</button><button id="save" type="button">単一HTMLを保存</button></div>
-<p class="note" id="about"><strong>何が起きる？</strong>まず文字を選択したりリンクをクリックしてください。その後、ページの右端を左へドラッグすると、このWebページの文字や図が一緒に曲がり、下のページが現れます。途中で戻すこともできます。これは動画ではなくHTMLから生まれる変形の実験です。</p>
-<canvas id="capture" layoutsubtree content="drawable"><div class="capture-node" drawable id="capture-node"></div></canvas>
+:root{--paper:#f0e5cf;--ink:#473523;--gold:#a88d65}*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:#e8dcc4;font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif}
+button,select{font:inherit}button{cursor:pointer}a{color:#86532d;text-underline-offset:3px}
+header{position:relative;z-index:50;min-height:54px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;background:#eee3cd;border-bottom:1px solid #a48b664f;padding:9px clamp(12px,3vw,38px)}
+.logo{font-size:21px;letter-spacing:.2em;color:#654626}.nav{display:flex;gap:4px;flex-wrap:wrap}.nav a{font:10px system-ui,sans-serif;text-decoration:none;padding:7px 8px;border:1px solid #bcaa8a}.nav a[aria-current]{background:#654626;color:#fff}
+.kicker{font:10px system-ui,sans-serif;letter-spacing:.25em;color:#95754f}
+.intro{text-align:center;padding:18px 14px 12px}.intro h1{font-size:clamp(22px,3vw,34px);font-weight:normal;letter-spacing:.14em;margin:5px 0}.intro p{font-size:11px;color:#826e59;margin:0}
+#viewport{position:relative;max-width:1360px;margin:0 auto;width:100%;height:clamp(460px,68vh,690px);perspective:1700px;transform-style:preserve-3d;isolation:isolate;background:linear-gradient(90deg,#e7d5b3 0%,#f0e6d2 48%,#d4b88b 50%,#f0e6d2 52%,#e7d5b3 100%);overflow:visible}
+#viewport:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;box-shadow:inset 0 0 75px #70522a23}
+#left-base{position:absolute;left:0;top:0;width:50%;height:100%;z-index:1;overflow:hidden}
+#right-base{position:absolute;left:50%;top:0;width:50%;height:100%;z-index:1;overflow:hidden}
+.page{width:100%;height:100%;position:relative;background:linear-gradient(90deg,#e3cda9 0,#f1e6d0 5%,#f3e9d6 89%,#e0cda8 100%);border:1px solid #bfa782;overflow:hidden}
+.page.left{background:linear-gradient(90deg,#dcc49e,#f3e9d6 11%,#f2e6cf 91%,#c3aa81)}
+.page.right{background:linear-gradient(90deg,#cdb18a,#f2e5cf 9%,#f2e7d2 92%,#dfc9a7)}
+.page:before{content:"";position:absolute;inset:13px;border:1px solid #bba47d88;pointer-events:none}
+.page-inner{padding:clamp(24px,4.1vw,57px) clamp(21px,5.5vw,70px) clamp(21px,3.2vw,45px);height:100%;display:flex;flex-direction:column}
+.page-heading{font:10px system-ui,sans-serif;letter-spacing:.19em;color:#8b6e49;border-bottom:1px solid #bfa985;padding-bottom:13px}
+.page h2{font-weight:normal;font-size:clamp(19px,2.7vw,33px);letter-spacing:.11em;margin:22px 0 16px}
+.page p{font-size:clamp(12px,1.28vw,15px);line-height:2.08;letter-spacing:.025em;margin:0 0 16px}
+.page .drop:first-letter{font-size:2.7em;line-height:.9;float:left;margin:7px 10px 0 0;color:#88603e}
+.page .mini{font-size:12px;color:#826b4c}
+.page-footer{margin-top:auto;border-top:1px solid #baa47e;padding-top:10px;display:flex;justify-content:space-between;font-size:10px;letter-spacing:.14em;color:#8c7252}
+.ornament{text-align:center;font-size:30px;color:#8e7651;margin:6px}
+.mini-map{width:100%;height:clamp(85px,17vh,175px);border:1px solid #bca680;margin:2px 0 16px;background:#e6d7b9}
+.mini-map svg{width:100%;height:100%}
+#spine{position:absolute;z-index:3;left:calc(50% - 10px);top:0;width:20px;height:100%;pointer-events:none;background:linear-gradient(90deg,transparent,#50372034 45%,#f9f0db7d 55%,transparent)}
+.leaf{position:absolute;left:50%;top:0;width:50%;height:100%;transform-origin:0% 50%;transform-style:preserve-3d;will-change:transform}
+.leaf-face{position:absolute;inset:0;backface-visibility:hidden;transform:translateZ(0.5px);overflow:hidden}
+.leaf-back{transform:rotateY(180deg) translateZ(.5px)}
+.leaf .page{height:100%}
+.leaf:not(.frontmost){pointer-events:none}
+.leaf.frontmost{pointer-events:auto}
+#shadow{position:absolute;z-index:2;left:50%;top:0;width:50%;height:100%;pointer-events:none;background:linear-gradient(90deg,#3420134f,transparent 75%);opacity:0}
+#grab{position:absolute;right:0;top:0;width:clamp(36px,6vw,75px);height:100%;z-index:40;cursor:grab;touch-action:none;opacity:0;background:linear-gradient(90deg,transparent,#9a76452c);transition:opacity .16s}
+#viewport:hover #grab,#grab:focus-visible{opacity:1}
+#grab:after{content:"";position:absolute;right:11px;top:46%;width:2px;height:48px;background:#95734b77}
+#viewport.dragging #grab{cursor:grabbing}
+#grab.left-grab{left:0;right:auto;background:linear-gradient(90deg,#9a76452c,transparent)}
+#grab.left-grab:after{right:auto;left:11px}
+#viewport.dragging,#viewport.dragging *{user-select:none}
+.tools{display:flex;justify-content:center;align-items:center;gap:11px;flex-wrap:wrap;padding:17px 12px 12px;border-top:1px solid #ad926a5c}
+.tools button,.tools select{border:1px solid #b39b78;padding:9px 13px;background:#f2e7d1;color:#624a33;font-size:12px}.tools button:disabled{opacity:.32;cursor:not-allowed}.tools output{font:12px system-ui,sans-serif;min-width:110px;text-align:center;color:#765c3d}
+.about{max-width:930px;margin:0 auto;padding:12px 20px 40px;color:#7e6b52;font:12px/1.8 system-ui,sans-serif}
+@media(max-width:750px){
+#viewport{height:clamp(450px,67vh,570px)}
+.page-inner{padding:24px 21px 19px}.page-heading{font-size:8px}.page h2{font-size:17px;margin:16px 0 10px}.page p{font-size:11px;line-height:1.72;margin-bottom:9px}.page .mini{font-size:10px}.mini-map{height:95px}.page-footer{font-size:8px}.ornament{font-size:23px}
+}
+@media(max-width:450px){#viewport{height:520px}.page-inner{padding:21px 14px 18px}.page h2{font-size:15px}.page p{font-size:10px;line-height:1.55}.page-heading{letter-spacing:.04em;font-size:7px}.mini-map{height:70px}.page-footer{letter-spacing:0}}
+</style></head><body>
+<header><span class="logo">HEXIM</span><nav class="nav"><a href="./classic.html">初期版</a><a href="./index.html">WebGL安定版</a><a href="./volume.html">質感実験</a><a href="./living-page.html">つかめる年代記</a><a href="./page-reveal.html" aria-current="page">ページの正体</a></nav></header>
+<div class="intro"><div class="kicker">THE SEVENTH WORLD / THE AGE OF ASH</div><h1>第七世界の年代記</h1><p>文章を選択できる普通のWebページです。右端を左へドラッグすると、右ページだけがめくれます。</p></div>
+<main id="viewport" aria-label="第七世界の年代記。右ページを左へドラッグしてめくれます">
+<div id="left-base"></div><div id="right-base"></div><div id="shadow"></div><div id="leaves"></div><div id="spine"></div><div id="grab" role="button" tabindex="0" aria-label="右端をドラッグしてページをめくる"></div>
+</main>
+<div class="tools"><button id="prev">← 前の見開き</button><output id="status">01 / 12</output><button id="next">次の見開き →</button><label style="font:11px system-ui,sans-serif">目次 <select id="toc" aria-label="見開きを選択"></select></label><button id="save">単一HTMLを保存</button></div>
+<p class="about" id="about">この見開きは、文章・リンク・地図を持つ通常のHTML文書です。中央を軸に右ページだけが左へめくれ、その紙の裏面が次の見開きの左ページになります。めくった紙は消えず左側に残ります。</p>
 <script>
 (()=>{
 'use strict';
-const $=s=>document.querySelector(s);
-const viewport=$('#viewport'), live=$('#live'), curved=$('#curved'), beneath=$('#beneath'), grab=$('#grab'), shadow=$('#contact'), status=$('#status');
-let progress=0,target=0,drag=null,animating=false,frame=0,slices=[],width=0,height=0;
-const count=42;
-const capture=$('#capture'),captureNode=$('#capture-node');
-const ctx=capture.getContext('2d');
-const native=typeof ctx?.drawElementImage==='function';
-let nativeBitmap=null;
-const paintNative=()=>{
- if(!native)return;
- try{
-  captureNode.replaceChildren(live.cloneNode(true));
-  const w=Math.ceil(viewport.clientWidth),h=Math.ceil(viewport.clientHeight);
-  capture.width=w;capture.height=h;
-  ctx.clearRect(0,0,w,h);
-  ctx.drawElementImage(captureNode,0,0);
-  // Some experimental builds expose the API but do not paint the subtree.
-  // Never swap a readable HTML page for an empty texture.
-  const pixel=ctx.getImageData(Math.floor(w*.5),Math.floor(h*.5),1,1).data;
-  if(pixel[3]===0){nativeBitmap=null;return}
-  const image=document.createElement('canvas');image.width=w;image.height=h;
-  image.getContext('2d').drawImage(capture,0,0);nativeBitmap=image;
- }catch(e){nativeBitmap=null}
+const $=q=>document.querySelector(q),viewport=$('#viewport'),holder=$('#leaves'),grab=$('#grab'),status=$('#status'),toc=$('#toc');
+const history=[
+['灰の夜明け','名もない旅人たちが荒野の果てに小さな火を灯した。まだ王国も地図もなかったが、世界はその炎から始まった。','焚火の周りに集まった人々は、次の朝も同じ場所へ戻ることを約束した。そこが最初の集落となった。'],
+['最初の遠征','森の向こうに古い石造りの道が見つかった。若い探索者が危険を引き受け、誰も歩いたことのない谷へ進んだ。','一行が持ち帰ったのは金貨だけではない。街を守るための知恵と、世界を広げるための勇気だった。'],
+['鍛冶場の炎','小さな鍛冶場に槌の音が響く。初めて作られた剣は粗末だったが、そこには職人の誇りが刻まれていた。','やがて工房は学校になり、若い職人たちが師の技を受け継いでいった。'],
+['東の交易路','山を越える街道が拓かれ、遠い都市から旅の商人が現れた。地図に新しい線が一本引かれた。','荷車とともに運ばれた噂は、次の遠征の道しるべとなった。街は初めて外の世界と結ばれた。'],
+['築かれた王国','旅人の集落は大きな城壁を持つ都市へ変わった。街の人々は広場に集まり、王国の誕生を祝った。','だが王国を築いたのは英雄の剣だけではない。道を作り、畑を耕し、次の日の火を守った人々もいた。'],
+['黒い森の戦い','深い森から現れた魔物の群れが街道を閉ざした。英雄たちは互いの背中を守り、夕暮れまで戦った。','最後の一撃が終わると、戦場には奇妙な静けさが戻ってきた。'],
+['継承の儀式','長く旅を続けた英雄は剣を置き、次の世代に役割を託した。名は消えても教えは残った。','若い冒険者が古い剣の柄を握ると、物語は新しい章へ進んだ。'],
+['雨の年','三十日続いた雨が畑を沈め、食料を乏しくした。人々は収穫を分け合い、危機を乗り越えた。','この出来事を境に、街では毎年備蓄庫の扉を開く祭りが始まった。'],
+['地下の門','地下深くに閉ざされていた門が見つかった。その向こうには、昔の世界の名残が眠っていた。','英雄たちが持ち帰った古い印章は、世界の成り立ちをめぐる新しい謎を残した。'],
+['最後の遠征','最も遠い地平へ向けて一行は出発した。帰還を約束する者は誰もいなかった。','星明かりの下で交わした言葉は、やがて最後の歴史の一行になった。'],
+['灰の時代','夜空が赤く染まり、遠くの山に灰が降り積もった。街の灯りは一つ、また一つと消えていった。','人々は互いの名前を呼び、最後まで記憶を手放さなかった。'],
+['次の世界へ','世界は終わった。しかしそこを歩いた者たちの物語が、この紙の上に残された。','最後の頁を閉じれば、次の世界の朝が訪れる。誰かがまた、小さな火を灯すだろう。']
+];
+const n=history.length,angles=Array(n-1).fill(0),directions=Array(n-1).fill(1);
+let current=0,goal=0,active=null,drag=null,raf=0;
+const escapeHTML=value=>String(value).replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
+const map=()=>'<div class="mini-map"><svg viewBox="0 0 400 200" role="img" aria-label="古地図"><g fill="none" stroke="#9b825c" stroke-width="2.5" opacity=".75"><path d="M0 55Q100 20 170 95T400 65"/><path d="M0 158Q160 104 221 142T410 112"/><path d="M70 0Q80 80 153 102T235 200" stroke-dasharray="6 8"/></g><g fill="#8c6b49"><circle cx="170" cy="95" r="10"/><path d="M263 82l22-24 22 24v38h-44z"/></g><text x="128" y="126" fill="#73593e" font-size="12">ASH VILLAGE</text></svg></div>';
+const content=(i,side)=>{
+ const h=history[i],left=side==='left',p=left?h[1]:h[2],number=2*i+(left?1:2);
+ return '<div class="page '+side+'"><div class="page-inner"><div class="page-heading">THE SEVENTH WORLD · '+String(i+1).padStart(2,'0')+' / '+n+'</div>'+
+ (left?'<h2>'+escapeHTML(h[0])+'</h2><p class="drop">'+escapeHTML(p)+'</p><p>ひとつの選択が、次の時代へ続く道となった。この記録は、その時代に生きた者のために残されている。</p><p class="mini"><a href="#about">この記録について</a></p>':
+ '<div class="ornament">❦</div>'+ (i%2===0?map():'<h2>'+escapeHTML(h[0])+' — 続き</h2>')+'<p>'+escapeHTML(p)+'</p><p class="mini">忘れられた名も、その営みも、世界の歴史をかたちづくった。</p>')+
+ '<div class="page-footer"><span>CHRONICLE OF HEXIM</span><span>— '+String(number).padStart(2,'0')+' —</span></div></div></div>';
 };
-// Generate slices from the actual page markup. The text never becomes a video,
-// and the flat view is always the original selectable HTML.
-const build=()=>{
- width=viewport.clientWidth;height=viewport.clientHeight;
- curved.replaceChildren();slices=[];
- const sw=width/count;
- for(let i=0;i<count;i++){
-  const element=document.createElement('div');element.className='strip';
-  element.style.width=(sw+1)+'px';element.style.left='0';
-  const face=document.createElement('div');face.className='face';
-  face.style.width=(sw+1)+'px';
-  if(nativeBitmap){
-   const image=document.createElement('canvas');
-   image.width=Math.ceil(sw)+2;image.height=Math.ceil(height);
-   const canvasCtx=image.getContext('2d');
-   canvasCtx.drawImage(nativeBitmap,i*sw,0,sw,height,0,0,sw,height);
-   image.style.cssText='display:block;width:'+sw+'px;height:100%';
-   face.append(image);
-  }else{
-   const clone=live.cloneNode(true);clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
-   clone.style.width=width+'px';clone.style.height=height+'px';clone.style.position='absolute';clone.style.left=(-i*sw)+'px';clone.style.top='0';clone.style.pointerEvents='none';
-   face.append(clone);
-  }
-  const reverse=document.createElement('div');reverse.className='reverse';
-  element.append(face,reverse);curved.append(element);slices.push(element);
- }
+$('#left-base').innerHTML=content(0,'left');
+$('#right-base').innerHTML=content(n-1,'right');
+const leaves=[];
+for(let i=0;i<n-1;i++){
+ const el=document.createElement('div');el.className='leaf';
+ el.innerHTML='<div class="leaf-face">'+content(i,'right')+'</div><div class="leaf-face leaf-back">'+content(i+1,'left')+'</div>';
+ holder.append(el);leaves.push(el);
+ const opt=document.createElement('option');opt.value=String(i);opt.textContent=String(i+1).padStart(2,'0')+' · '+history[i][0];toc.append(opt);
+}
+{const opt=document.createElement('option');opt.value=String(n-1);opt.textContent=String(n).padStart(2,'0')+' · '+history[n-1][0];toc.append(opt)}
+const render=()=>{
+ leaves.forEach((leaf,i)=>{
+  const angle=angles[i],turning=active?.leaf===i;
+  // The same physical sheet remains at the same hinge for its entire life.
+  leaf.style.transform='rotateY('+(-180*angle)+'deg)';
+  leaf.style.zIndex=angle>.5?String(10+i):String(100+n-i);
+  leaf.classList.toggle('frontmost',turning||i===current&&current<n-1);
+  leaf.style.filter=turning?'drop-shadow(8px 8px 12px #34201640)':'none';
+ });
+ const moving=active?Math.sin(Math.PI*angles[active.leaf]):0;
+ $('#shadow').style.opacity=String(Math.max(0,moving)*.72);
+ $('#shadow').style.transform='scaleX('+(1-.55*moving)+')';
+ status.textContent=String(goal+1).padStart(2,'0')+' / '+String(n).padStart(2,'0')+(current!==goal?' · 移動中':'');
+ $('#prev').disabled=goal<=0;$('#next').disabled=goal>=n-1;
+ toc.value=String(goal);
+ grab.classList.toggle('left-grab',goal===n-1&&current===n-1);
+ grab.style.display=current===n-1&&goal===n-1?'block':'block';
 };
-const paint=t=>{
- progress=Math.min(1,Math.max(0,t));
- const k=progress,w=width;
- for(let i=0;i<count;i++){
-  const u=i/count,cent=(i+.5)/count;
-  // Flat webpage -> lifted curved paper -> a turned sheet occupying the left half.
-  const x=w*((1-k)*u + k*.49*(1-u));
-  const fold=Math.sin(Math.PI*k);
-  const lift=fold*Math.pow(u,1.8);
-  const y= -lift*height*.09;
-  const z=lift*125;
-  const angle=-180*k*(.48+.52*u);
-  const stretch=1-.29*k;
-  const el=slices[i];
-  el.style.transform='translate3d('+x+'px,'+y+'px,'+z+'px) rotateY('+angle+'deg) scaleX('+stretch+')';
-  el.style.filter='brightness('+(1-.18*fold*u)+')';
- }
- const turning=k>.001||target===1;
- curved.classList.toggle('on',turning);
- live.style.visibility=turning?'hidden':'visible';
- viewport.classList.toggle('turned',k>.995);
- shadow.style.opacity=String(Math.sin(Math.PI*k)*.75);
- shadow.style.transform='translateX('+(-k*width*.32)+'px)';
- status.textContent=(k>.995?'02 / 02 · めくった紙は左に残っています':k>.001?'ドラッグ中 · HTMLが曲がっています':'01 / 02 · HTML文書');
- $('#previous').disabled=animating||k<.995;
- $('#following').disabled=animating||k>.005;
-};
-const animate=end=>{
- if(animating)return;
- animating=true;const start=progress,t0=performance.now();
- const duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:330;
+const continueTurns=()=>{
+ if(active||current===goal)return;
+ const dir=Math.sign(goal-current),leaf=dir>0?current:current-1;
+ directions[leaf]=dir;
+ const from=angles[leaf],to=dir>0?1:0;
+ const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:(Math.abs(goal-current)>1?230:430);
+ const started=performance.now();active={leaf,dir};
  const tick=now=>{
-  const u=duration?Math.min(1,(now-t0)/duration):1;
-  paint(start+(end-start)*(u*u*(3-2*u)));
-  if(u<1){frame=requestAnimationFrame(tick);return}
-  target=end;animating=false;paint(end);
+  const u=duration===0?1:Math.min(1,(now-started)/duration),ease=u*u*(3-2*u);
+  angles[leaf]=from+(to-from)*ease;render();
+  if(u<1){raf=requestAnimationFrame(tick);return}
+  angles[leaf]=to;current+=dir;active=null;render();continueTurns();
  };
- frame=requestAnimationFrame(tick);
+ raf=requestAnimationFrame(tick);
 };
-const begin=e=>{
- if(animating||drag||e.button!==0)return;
- e.preventDefault();
- drag={x:e.clientX,pointerId:e.pointerId,start:progress};
- viewport.classList.add('dragging');
+const navigate=next=>{goal=Math.max(0,Math.min(n-1,next));render();continueTurns()};
+const seek=next=>{
+ next=Math.max(0,Math.min(n-1,next));
+ if(raf)cancelAnimationFrame(raf);raf=0;active=null;drag=null;
+ current=goal=next;angles.forEach((_,i)=>angles[i]=i<next?1:0);
+ viewport.classList.remove('dragging');render();
 };
-const move=e=>{
- if(!drag||e.pointerId!==drag.pointerId)return;
- // Moving right always uncurls; moving left always lifts the sheet.
- paint(drag.start-(e.clientX-drag.x)/(width*.7));
-};
-const end=e=>{
- if(!drag||e.pointerId!==drag.pointerId)return;
- const cancel=e.type==='pointercancel';
- drag=null;viewport.classList.remove('dragging');
- animate(cancel?target:(progress>.43?1:0));
-};
-viewport.addEventListener('pointerdown',e=>{
+const start=e=>{
+ if(active||drag||e.button!==0||current===n-1&&goal===n-1&&false)return;
  const bounds=viewport.getBoundingClientRect();
- const onEdge=progress>.5?e.clientX<bounds.left+Math.max(36,width*.07):e.clientX>bounds.right-Math.max(36,width*.07);
- if(onEdge)begin(e);
-},true);
-window.addEventListener('pointermove',move,{passive:true});
-window.addEventListener('pointerup',end);
-window.addEventListener('pointercancel',end);
-grab.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();animate(progress>.5?0:1)}});
-$('#following').onclick=()=>animate(1);
-$('#previous').onclick=()=>animate(0);
+ const left=current>0&&e.clientX<bounds.left+Math.max(38,bounds.width*.055);
+ const right=current<n-1&&e.clientX>bounds.right-Math.max(38,bounds.width*.055);
+ if(!left&&!right)return;
+ e.preventDefault();
+ const dir=right?1:-1;
+ const leaf=dir>0?current:current-1;
+ drag={pointerId:e.pointerId,x:e.clientX,leaf,dir,start:angles[leaf]};
+ viewport.classList.add('dragging');grab.style.cursor='grabbing';render();
+};
+const motion=e=>{
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ const delta=(drag.x-e.clientX)/(viewport.clientWidth*.40);
+ angles[drag.leaf]=Math.max(0,Math.min(1,drag.start+delta));
+ active={leaf:drag.leaf,dir:drag.dir};
+ render();
+};
+const stop=e=>{
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ const d=drag;drag=null;viewport.classList.remove('dragging');grab.style.cursor='';
+ active=null;const fraction=angles[d.leaf];
+ // Cancel returns to the original physical position, including when reversing.
+ const finish=e.type==='pointercancel'?d.start:(d.dir>0?(fraction>.35?1:0):(fraction<.65?0:1));
+ const endIndex=d.leaf+(finish===1?1:0);
+ goal=current=endIndex; // Navigation resumes only after the current leaf settles.
+ const from=fraction,startTime=performance.now(),duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:260;
+ active={leaf:d.leaf,dir:d.dir};
+ const tick=now=>{
+  const u=duration===0?1:Math.min(1,(now-startTime)/duration),ease=u*u*(3-2*u);
+  angles[d.leaf]=from+(finish-from)*ease;render();
+  if(u<1){raf=requestAnimationFrame(tick);return}
+  angles[d.leaf]=finish;active=null;render();
+ };
+ raf=requestAnimationFrame(tick);
+};
+viewport.addEventListener('pointerdown',start,true);
+window.addEventListener('pointermove',motion,{passive:true});
+window.addEventListener('pointerup',stop);
+window.addEventListener('pointercancel',stop);
+window.addEventListener('blur',()=>{if(drag)stop({pointerId:drag.pointerId,type:'pointercancel'})});
+grab.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();navigate(current===n-1?current-1:current+1)}});
+$('#prev').onclick=()=>navigate(goal-1);
+$('#next').onclick=()=>navigate(goal+1);
+toc.onchange=()=>seek(Number(toc.value));
+document.addEventListener('keydown',e=>{if(e.target===toc)return;if(e.key==='ArrowRight')navigate(goal+1);if(e.key==='ArrowLeft')navigate(goal-1)});
 $('#save').onclick=()=>{
  const url=URL.createObjectURL(new Blob(['<!doctype html>\n'+document.documentElement.outerHTML],{type:'text/html;charset=utf-8'}));
- const a=document.createElement('a');a.href=url;a.download='hexim-page-reveal.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1300);
+ const a=document.createElement('a');a.href=url;a.download='hexim-chronicle-24-pages.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
 };
-const resize=()=>{
- const previous=progress;paintNative();build();paint(previous);
-};
-window.addEventListener('resize',resize);
-resize();
+render();
 })();
 </script></body></html>
