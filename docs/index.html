@@ -42,7 +42,7 @@ const chapters=[
 const $=s=>document.querySelector(s),world=$('#world'),prev=$('#previous'),next=$('#following'),progress=$('#progress'),mode=$('#mode');
 const gl=world.getContext('webgl',{antialias:true,alpha:false,premultipliedAlpha:false});
 if(!gl){mode.textContent='WebGLが利用できません';world.replaceWith(Object.assign(document.createElement('div'),{textContent:'このブラウザではWebGLを利用できません。Chromeで開いてください。'}));return}
-const vert='attribute vec3 position;attribute vec2 uv;attribute float light;uniform vec2 resolution;varying vec2 vUv;varying float vLight;void main(){float depth=6.7-position.y*.42-position.z*.70;float aspect=resolution.x/resolution.y;vec2 screen=vec2(position.x*1.5/aspect,(position.y*.84-position.z*.55)*1.57-.25);gl_Position=vec4(screen,0.5,depth/5.9);vUv=uv;vLight=light;}';
+const vert='attribute vec3 position;attribute vec2 uv;attribute float light;uniform vec2 resolution;varying vec2 vUv;varying float vLight;void main(){float aspect=resolution.x/resolution.y;vec2 screen=vec2(position.x*1.12/aspect,(position.y*.84-position.z*.55)*1.57-.25);gl_Position=vec4(screen,0.35-position.y*.28-position.z*.002,1.0);vUv=uv;vLight=light;}';
 const frag='precision mediump float;uniform sampler2D texture0;uniform vec4 tint;uniform float textured;varying vec2 vUv;varying float vLight;void main(){vec4 c=mix(tint,texture2D(texture0,vUv)*tint,textured);gl_FragColor=vec4(c.rgb*(.59+.41*vLight),c.a);}';
 const shader=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s};
 const prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,vert));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,frag));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(prog));gl.useProgram(prog);
@@ -52,7 +52,7 @@ const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);const strid
 gl.enableVertexAttribArray(position);gl.vertexAttribPointer(position,3,gl.FLOAT,false,stride,0);
 gl.enableVertexAttribArray(uv);gl.vertexAttribPointer(uv,2,gl.FLOAT,false,stride,12);
 gl.enableVertexAttribArray(light);gl.vertexAttribPointer(light,1,gl.FLOAT,false,stride,20);
-gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);
+gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.clearDepth(1.0);gl.disable(gl.CULL_FACE);
 const makeTexture=canvas=>{const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,canvas);return t};
 const W=512,H=680,canvas=()=>{const c=document.createElement('canvas');c.width=W;c.height=H;return c};
 const drawArt=(ctx,kind)=>{
